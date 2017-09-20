@@ -6,7 +6,13 @@
     "pebble-app"
   ],
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@smallstoneapps/linked-list": "^1.4.0",
+    "pebble-fctx": "^1.6.2"
+  },
+  "devDependencies": {
+    "pebble-fctx-compiler": "^1.2.2"
+  },
   "pebble": {
     "displayName": "offu",
     "uuid": "9fee63ee-eb21-4f71-9555-7b58926dda84",
@@ -22,7 +28,13 @@
     },
     "messageKeys": [],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "raw",
+          "name": "ROBOTO_REGULAR_FFONT",
+          "file": "Roboto-Regular.ffont"
+        }
+      ]
     }
   }
 }
