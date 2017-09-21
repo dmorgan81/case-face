@@ -15,17 +15,15 @@ struct FctxLayer {
 static bool prv_layer_children_foreach(void *obj, void *fctx) {
     logf();
     FctxLayer *this = (FctxLayer *) obj;
-    if (this->update_proc && !fctx_layer_get_hidden(this)) {
-        GRect frame = layer_get_frame(this->layer);
-        GPoint origin = frame.origin;
-
-        fctx_set_pivot(fctx, FPointI(-origin.x, -origin.y));
+    bool hidden = fctx_layer_get_hidden(this);
+    if (this->update_proc && !hidden) {
         fctx_set_scale(fctx, FPointOne, FPointOne);
         fctx_set_rotation(fctx, 0);
-        fctx_set_offset(fctx, FPointZero);
+        fctx_set_offset(fctx, g2fpoint(fctx_layer_get_origin(this)));
+
         this->update_proc(this, fctx);
     }
-    if (this->children) linked_list_foreach(this->children, prv_layer_children_foreach, fctx);
+    if (this->children && !hidden) linked_list_foreach(this->children, prv_layer_children_foreach, fctx);
     return true;
 }
 
