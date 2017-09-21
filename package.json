@@ -10,10 +10,12 @@
     "@smallstoneapps/linked-list": "^1.4.0",
     "enamel": "^1.2.5",
     "pebble-clay": "^1.0.4",
+    "pebble-connection-vibes": "^1.1.0",
     "pebble-events": "^1.2.0",
     "pebble-fctx": "^1.6.2",
     "pebble-generic-weather": "file:../pebble-generic-weather",
-    "pebble-geocode-mapquest": "^1.0.2"
+    "pebble-geocode-mapquest": "^1.0.2",
+    "pebble-hourly-vibes": "^1.1.0"
   },
   "devDependencies": {
     "pebble-fctx-compiler": "^1.2.2"
@@ -33,6 +35,8 @@
     },
     "messageKeys": [
       "APP_READY",
+      "HOURLY_VIBE",
+      "CONNECTION_VIBE",
       "WEATHER_UNIT",
       "WEATHER_USE_GPS",
       "WEATHER_LOCATION_NAME",

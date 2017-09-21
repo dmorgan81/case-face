@@ -1,5 +1,7 @@
 #include <pebble.h>
 #include <pebble-events/pebble-events.h>
+#include <pebble-connection-vibes/connection-vibes.h>
+#include <pebble-hourly-vibes/hourly-vibes.h>
 #include <enamel.h>
 #include "fctx-layer.h"
 #include "fctx-text-layer.h"
@@ -131,6 +133,9 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
 static void prv_settings_handler(void *context) {
     logf();
     prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
+
+    connection_vibes_set_state(atoi(enamel_get_CONNECTION_VIBE()));
+    hourly_vibes_set_enabled(enamel_get_HOURLY_VIBE());
 }
 
 static void prv_window_load(Window *window) {
@@ -241,6 +246,13 @@ static void prv_init(void) {
 
     enamel_init();
     weather_init();
+    connection_vibes_init();
+    hourly_vibes_init();
+    uint32_t const pattern[] = { 100 };
+    hourly_vibes_set_pattern((VibePattern) {
+        .durations = pattern,
+        .num_segments = 1
+    });
 
     events_app_message_open();
 
@@ -256,6 +268,8 @@ static void prv_deinit(void) {
     logf();
     window_destroy(s_window);
 
+    hourly_vibes_deinit();
+    connection_vibes_deinit();
     weather_deinit();
     enamel_deinit();
 }
