@@ -161,7 +161,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, s_grid_layer);
 
     s_time_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 2, 0));
-    fctx_text_layer_set_font(s_time_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_time_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_time_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_time_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_time_layer, GColorWhite);
@@ -169,7 +169,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_time_layer));
 
     s_date_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 2, 70));
-    fctx_text_layer_set_font(s_date_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_date_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_date_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_date_layer, FTextAnchorBottom);
     fctx_text_layer_set_color(s_date_layer, GColorWhite);
@@ -177,7 +177,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_date_layer));
 
     s_weather_icon_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 25));
-    fctx_text_layer_set_font(s_weather_icon_layer, RESOURCE_ID_WEATHER_ICONS_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_weather_icon_layer, RESOURCE_ID_WEATHER_ICONS_FFONT);
     fctx_text_layer_set_alignment(s_weather_icon_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_weather_icon_layer, FTextAnchorMiddle);
     fctx_text_layer_set_color(s_weather_icon_layer, GColorWhite);
@@ -186,7 +186,7 @@ static void prv_window_load(Window *window) {
     s_weather_icon_origin = fctx_layer_get_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
 
     s_temperature_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25));
-    fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_temperature_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_temperature_layer, FTextAnchorMiddle);
     fctx_text_layer_set_color(s_temperature_layer, GColorWhite);
@@ -194,7 +194,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temperature_layer));
 
     s_humidity_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 4));
-    fctx_text_layer_set_font(s_humidity_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_humidity_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_humidity_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_humidity_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_humidity_layer, GColorWhite);
@@ -202,7 +202,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_humidity_layer));
 
     s_feels_like_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 4));
-    fctx_text_layer_set_font(s_feels_like_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_feels_like_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_feels_like_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_feels_like_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_feels_like_layer, GColorWhite);
@@ -210,7 +210,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_feels_like_layer));
 
     s_temp_low_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 22 + 4));
-    fctx_text_layer_set_font(s_temp_low_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_temp_low_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_temp_low_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_temp_low_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_temp_low_layer, GColorWhite);
@@ -218,7 +218,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_low_layer));
 
     s_temp_high_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + 4));
-    fctx_text_layer_set_font(s_temp_high_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_font(s_temp_high_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_temp_high_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_temp_high_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_temp_high_layer, GColorWhite);

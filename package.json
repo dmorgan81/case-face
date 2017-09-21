@@ -26,7 +26,6 @@
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
-      "aplite",
       "basalt",
       "diorite"
     ],
@@ -50,12 +49,12 @@
       "media": [
         {
           "type": "raw",
-          "name": "ROBOTO_REGULAR_FFONT",
-          "file": "Roboto-Regular.ffont"
+          "name": "TEXT_FFONT",
+          "file": "Lato-Regular.ffont"
         },
         {
           "type": "raw",
-          "name": "WEATHER_ICONS_REGULAR_FFONT",
+          "name": "WEATHER_ICONS_FFONT",
           "file": "weather_iconsregular.ffont"
         }
       ]
