@@ -14,6 +14,8 @@ static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_temperature_layer;
 static FctxTextLayer *s_humidity_layer;
 static FctxTextLayer *s_feels_like_layer;
+static FctxTextLayer *s_temp_low_layer;
+static FctxTextLayer *s_temp_high_layer;
 
 static EventHandle s_tick_timer_event_handle;
 static EventHandle s_weather_event_handle;
@@ -74,6 +76,14 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     static char buf_feels_like[16];
     snprintf(buf_feels_like, sizeof(buf_feels_like), "FL: %d°", unit == 1 ? info->temp_feels_like_f : info->temp_feels_like_c);
     fctx_text_layer_set_text(s_feels_like_layer, buf_feels_like);
+
+    static char buf_temp_low[16];
+    snprintf(buf_temp_low, sizeof(buf_temp_low), "LO: %d°", unit == 1 ? info->temp_low_f: info->temp_low_c);
+    fctx_text_layer_set_text(s_temp_low_layer, buf_temp_low);
+
+    static char buf_temp_high[16];
+    snprintf(buf_temp_high, sizeof(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
+    fctx_text_layer_set_text(s_temp_high_layer, buf_temp_high);
 }
 
 static void prv_window_load(Window *window) {
@@ -124,6 +134,22 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_feels_like_layer, 16);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_feels_like_layer));
 
+    s_temp_low_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 22 + 4));
+    fctx_text_layer_set_font(s_temp_low_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_alignment(s_temp_low_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_temp_low_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_temp_low_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_temp_low_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_low_layer));
+
+    s_temp_high_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + 4));
+    fctx_text_layer_set_font(s_temp_high_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_alignment(s_temp_high_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_temp_high_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_temp_high_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_temp_high_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_high_layer));
+
     time_t now = time(NULL);
     prv_tick_handler(localtime(&now), DAY_UNIT | MINUTE_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
@@ -139,6 +165,8 @@ static void prv_window_unload(Window *window) {
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
+    fctx_text_layer_destroy(s_temp_low_layer);
+    fctx_text_layer_destroy(s_temp_high_layer);
     fctx_text_layer_destroy(s_feels_like_layer);
     fctx_text_layer_destroy(s_humidity_layer);
     fctx_text_layer_destroy(s_temperature_layer);
