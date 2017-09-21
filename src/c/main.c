@@ -19,6 +19,7 @@ static FctxTextLayer *s_temp_high_layer;
 
 static EventHandle s_tick_timer_event_handle;
 static EventHandle s_weather_event_handle;
+static EventHandle s_settings_event_handle;
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -84,6 +85,11 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     static char buf_temp_high[16];
     snprintf(buf_temp_high, sizeof(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
     fctx_text_layer_set_text(s_temp_high_layer, buf_temp_high);
+}
+
+static void prv_settings_handler(void *context) {
+    logf();
+    prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
 }
 
 static void prv_window_load(Window *window) {
@@ -154,14 +160,17 @@ static void prv_window_load(Window *window) {
     prv_tick_handler(localtime(&now), DAY_UNIT | MINUTE_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
 
-    prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
+
+    prv_settings_handler(NULL);
+    s_settings_event_handle = enamel_settings_received_subscribe(prv_settings_handler, NULL);
 
     window_set_background_color(window, GColorBlack);
 }
 
 static void prv_window_unload(Window *window) {
     logf();
+    enamel_settings_received_unsubscribe(s_settings_event_handle);
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
