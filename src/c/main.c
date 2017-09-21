@@ -11,11 +11,41 @@ static FctxLayer *s_root_layer;
 static FctxLayer *s_grid_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
+static FctxTextLayer *s_weather_icon_layer;
 static FctxTextLayer *s_temperature_layer;
 static FctxTextLayer *s_humidity_layer;
 static FctxTextLayer *s_feels_like_layer;
 static FctxTextLayer *s_temp_low_layer;
 static FctxTextLayer *s_temp_high_layer;
+
+typedef struct {
+    char *s;
+    GPoint p;
+} WeatherIcon;
+
+static const WeatherIcon s_weather_icon_na = { "I", { 0, -2 }};
+
+static const WeatherIcon const s_weather_icons_day[] = {
+    { "A", { -2, -2 }},
+    { "B", { 0, 4 }},
+    { "C", { 0, -2 }},
+    { "D", { 0, -6 }},
+    { "E", { 0, -6 }},
+    { "F", { 0, -6 }},
+    { "G", { 0, -6 }},
+    { "H", { 0, -6 }},
+};
+
+static const WeatherIcon const s_weather_icons_night[] = {
+    { "a", { -2, -2 }},
+    { "b", { 0, 0 }},
+    { "C", { 0, -2 }},
+    { "D", { 0, -6 }},
+    { "E", { 0, -6 }},
+    { "F", { 0, -6 }},
+    { "G", { 0, -6 }},
+    { "H", { 0, -6 }},
+};
 
 static EventHandle s_tick_timer_event_handle;
 static EventHandle s_weather_event_handle;
@@ -65,6 +95,17 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus status, void *context) {
+    WeatherIcon weather_icon;
+    if (info->condition == GenericWeatherConditionUnknown)
+        weather_icon = s_weather_icon_na;
+    else
+        weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
+    fctx_text_layer_set_text(s_weather_icon_layer, weather_icon.s);
+
+    GPoint origin = fctx_layer_get_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
+    origin = gpoint_add(origin, weather_icon.p);
+    fctx_layer_set_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer), origin);
+
     static char buf_temperature[8];
     int unit = atoi(enamel_get_WEATHER_UNIT());
     snprintf(buf_temperature, sizeof(buf_temperature), "%d°", unit == 1 ? info->temp_f : info->temp_c);
@@ -115,6 +156,14 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_color(s_date_layer, GColorWhite);
     fctx_text_layer_set_text_size(s_date_layer, 18);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_date_layer));
+
+    s_weather_icon_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 25));
+    fctx_text_layer_set_font(s_weather_icon_layer, RESOURCE_ID_WEATHER_ICONS_REGULAR_FFONT);
+    fctx_text_layer_set_alignment(s_weather_icon_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_weather_icon_layer, FTextAnchorMiddle);
+    fctx_text_layer_set_color(s_weather_icon_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_weather_icon_layer, 36);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
 
     s_temperature_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25));
     fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
@@ -179,6 +228,7 @@ static void prv_window_unload(Window *window) {
     fctx_text_layer_destroy(s_feels_like_layer);
     fctx_text_layer_destroy(s_humidity_layer);
     fctx_text_layer_destroy(s_temperature_layer);
+    fctx_text_layer_destroy(s_weather_icon_layer);
     fctx_text_layer_destroy(s_date_layer);
     fctx_text_layer_destroy(s_time_layer);
     fctx_layer_destroy(s_grid_layer);

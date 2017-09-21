@@ -44,6 +44,11 @@
           "type": "raw",
           "name": "ROBOTO_REGULAR_FFONT",
           "file": "Roboto-Regular.ffont"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_ICONS_REGULAR_FFONT",
+          "file": "weather_iconsregular.ffont"
         }
       ]
     }

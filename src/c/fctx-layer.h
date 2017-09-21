@@ -21,3 +21,4 @@ bool fctx_layer_get_hidden(const FctxLayer *this);
 void fctx_layer_set_hidden(FctxLayer *this, bool hidden);
 
 GPoint fctx_layer_get_origin(const FctxLayer *this);
+void fctx_layer_set_origin(FctxLayer *this, GPoint origin);

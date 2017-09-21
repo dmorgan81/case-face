@@ -144,3 +144,10 @@ GPoint fctx_layer_get_origin(const FctxLayer *this) {
     GRect frame = layer_get_frame(this->layer);
     return frame.origin;
 }
+
+void fctx_layer_set_origin(FctxLayer *this, GPoint origin) {
+    logf();
+    GRect frame = layer_get_frame(this->layer);
+    frame.origin = origin;
+    layer_set_frame(this->layer, frame);
+}
