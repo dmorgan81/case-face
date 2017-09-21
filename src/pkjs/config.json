@@ -78,6 +78,131 @@
         "items": [
             {
                 "type": "heading",
+                "defaultValue": "Widgets"
+            },
+            {
+                "type": "select",
+                "messageKey": "WIDGET_NW",
+                "label": "North West",
+                "defaultValue": "1",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "0"
+                    },
+                    {
+                        "label": "Humidity",
+                        "value": "1"
+                    },
+                    {
+                        "label": "Feels Like Temperature",
+                        "value": "2"
+                    },
+                    {
+                        "label": "Low Temperature",
+                        "value": "3"
+                    },
+                    {
+                        "label": "High Temperature",
+                        "value": "4"
+                    }
+                ],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "WIDGET_NE",
+                "label": "North East",
+                "defaultValue": "2",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "0"
+                    },
+                    {
+                        "label": "Humidity",
+                        "value": "1"
+                    },
+                    {
+                        "label": "Feels Like Temperature",
+                        "value": "2"
+                    },
+                    {
+                        "label": "Low Temperature",
+                        "value": "3"
+                    },
+                    {
+                        "label": "High Temperature",
+                        "value": "4"
+                    }
+                ],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "WIDGET_SW",
+                "label": "South West",
+                "defaultValue": "3",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "0"
+                    },
+                    {
+                        "label": "Humidity",
+                        "value": "1"
+                    },
+                    {
+                        "label": "Feels Like Temperature",
+                        "value": "2"
+                    },
+                    {
+                        "label": "Low Temperature",
+                        "value": "3"
+                    },
+                    {
+                        "label": "High Temperature",
+                        "value": "4"
+                    }
+                ],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "WIDGET_SE",
+                "label": "South East",
+                "defaultValue": "4",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "0"
+                    },
+                    {
+                        "label": "Humidity",
+                        "value": "1"
+                    },
+                    {
+                        "label": "Feels Like Temperature",
+                        "value": "2"
+                    },
+                    {
+                        "label": "Low Temperature",
+                        "value": "3"
+                    },
+                    {
+                        "label": "High Temperature",
+                        "value": "4"
+                    }
+                ],
+                "group": "widget"
+            }
+        ]
+    },
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
                 "defaultValue": "Weather"
             },
             {

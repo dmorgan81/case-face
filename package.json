@@ -43,7 +43,11 @@
       "WEATHER_UNIT",
       "WEATHER_USE_GPS",
       "WEATHER_LOCATION_NAME",
-      "WEATHER_INTERVAL"
+      "WEATHER_INTERVAL",
+      "WIDGET_NW",
+      "WIDGET_NE",
+      "WIDGET_SW",
+      "WIDGET_SE"
     ],
     "resources": {
       "media": [

@@ -8,6 +8,18 @@
 #include "weather.h"
 #include "logging.h"
 
+#define WIDGET_BUF_LEN 16
+#define WIDGET_BUF_SIZEOF(b) sizeof(b) * WIDGET_BUF_LEN
+
+typedef enum {
+    WidgetTypeNone = 0,
+    WidgetTypeHumidity,
+    WidgetTypeFeelsLike,
+    WidgetTypeLowTemperature,
+    WidgetTypeHighTemperature,
+    WidgetTypeEnd
+} WidgetType;
+
 static Window *s_window;
 static FctxLayer *s_root_layer;
 static FctxLayer *s_grid_layer;
@@ -15,13 +27,14 @@ static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_weather_icon_layer;
 static FctxTextLayer *s_temperature_layer;
-static FctxTextLayer *s_humidity_layer;
-static FctxTextLayer *s_feels_like_layer;
-static FctxTextLayer *s_temp_low_layer;
-static FctxTextLayer *s_temp_high_layer;
+static FctxTextLayer *s_widget_nw_layer;
+static FctxTextLayer *s_widget_ne_layer;
+static FctxTextLayer *s_widget_sw_layer;
+static FctxTextLayer *s_widget_se_layer;
 
 static GPoint s_weather_icon_origin;
 static FctxTextLayer* s_text_layers[8];
+static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
 typedef struct {
     char *s;
@@ -118,21 +131,17 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     snprintf(buf_temperature, sizeof(buf_temperature), "%d°", unit == 1 ? info->temp_f : info->temp_c);
     fctx_text_layer_set_text(s_temperature_layer, buf_temperature);
 
-    static char buf_humidity[16];
-    snprintf(buf_humidity, sizeof(buf_humidity), "HU: %d%%", info->humidity);
-    fctx_text_layer_set_text(s_humidity_layer, buf_humidity);
+    char *buf_humidity = s_widget_buffers[WidgetTypeHumidity];
+    snprintf(buf_humidity, WIDGET_BUF_SIZEOF(buf_humidity), "HU: %d%%", info->humidity);
 
-    static char buf_feels_like[16];
-    snprintf(buf_feels_like, sizeof(buf_feels_like), "FL: %d°", unit == 1 ? info->temp_feels_like_f : info->temp_feels_like_c);
-    fctx_text_layer_set_text(s_feels_like_layer, buf_feels_like);
+    char *buf_feels_like = s_widget_buffers[WidgetTypeFeelsLike];
+    snprintf(buf_feels_like, WIDGET_BUF_SIZEOF(buf_feels_like), "FL: %d°", unit == 1 ? info->temp_feels_like_f : info->temp_feels_like_c);
 
-    static char buf_temp_low[16];
-    snprintf(buf_temp_low, sizeof(buf_temp_low), "LO: %d°", unit == 1 ? info->temp_low_f: info->temp_low_c);
-    fctx_text_layer_set_text(s_temp_low_layer, buf_temp_low);
+    char *buf_temp_low = s_widget_buffers[WidgetTypeLowTemperature];
+    snprintf(buf_temp_low, WIDGET_BUF_SIZEOF(buf_temp_low), "LO: %d°", unit == 1 ? info->temp_low_f: info->temp_low_c);
 
-    static char buf_temp_high[16];
-    snprintf(buf_temp_high, sizeof(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
-    fctx_text_layer_set_text(s_temp_high_layer, buf_temp_high);
+    char *buf_temp_high = s_widget_buffers[WidgetTypeHighTemperature];
+    snprintf(buf_temp_high, WIDGET_BUF_SIZEOF(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
 }
 
 static void prv_settings_handler(void *context) {
@@ -148,6 +157,11 @@ static void prv_settings_handler(void *context) {
     for (uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) {
         fctx_text_layer_set_color(s_text_layers[i], enamel_get_COLOR_TEXT());
     }
+
+    fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[atoi(enamel_get_WIDGET_NW())]);
+    fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[atoi(enamel_get_WIDGET_NE())]);
+    fctx_text_layer_set_text(s_widget_sw_layer, s_widget_buffers[atoi(enamel_get_WIDGET_SW())]);
+    fctx_text_layer_set_text(s_widget_se_layer, s_widget_buffers[atoi(enamel_get_WIDGET_SE())]);
 
     window_set_background_color(s_window, enamel_get_COLOR_BACKGROUND());
 }
@@ -193,46 +207,48 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_temperature_layer, 36);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temperature_layer));
 
-    s_humidity_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 4));
-    fctx_text_layer_set_font(s_humidity_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_humidity_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_humidity_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_humidity_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_humidity_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_humidity_layer));
+    s_widget_nw_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 4));
+    fctx_text_layer_set_font(s_widget_nw_layer, RESOURCE_ID_TEXT_FFONT);
+    fctx_text_layer_set_alignment(s_widget_nw_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_widget_nw_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_widget_nw_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_widget_nw_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_nw_layer));
 
-    s_feels_like_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 4));
-    fctx_text_layer_set_font(s_feels_like_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_feels_like_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_feels_like_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_feels_like_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_feels_like_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_feels_like_layer));
+    s_widget_ne_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 4));
+    fctx_text_layer_set_font(s_widget_ne_layer, RESOURCE_ID_TEXT_FFONT);
+    fctx_text_layer_set_alignment(s_widget_ne_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_widget_ne_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_widget_ne_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_widget_ne_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_ne_layer));
 
-    s_temp_low_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 22 + 4));
-    fctx_text_layer_set_font(s_temp_low_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_temp_low_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_temp_low_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_temp_low_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_temp_low_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_low_layer));
+    s_widget_sw_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 22 + 4));
+    fctx_text_layer_set_font(s_widget_sw_layer, RESOURCE_ID_TEXT_FFONT);
+    fctx_text_layer_set_alignment(s_widget_sw_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_widget_sw_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_widget_sw_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_widget_sw_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_sw_layer));
 
-    s_temp_high_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + 4));
-    fctx_text_layer_set_font(s_temp_high_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_temp_high_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_temp_high_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_temp_high_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_temp_high_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_high_layer));
+    s_widget_se_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + 4));
+    fctx_text_layer_set_font(s_widget_se_layer, RESOURCE_ID_TEXT_FFONT);
+    fctx_text_layer_set_alignment(s_widget_se_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_widget_se_layer, FTextAnchorTop);
+    fctx_text_layer_set_color(s_widget_se_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_widget_se_layer, 16);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_se_layer));
+
+    memset(s_widget_buffers, 0, sizeof(s_widget_buffers));
 
     s_text_layers[0] = s_time_layer;
     s_text_layers[1] = s_date_layer;
     s_text_layers[2] = s_weather_icon_layer;
     s_text_layers[3] = s_temperature_layer;
-    s_text_layers[4] = s_humidity_layer;
-    s_text_layers[5] = s_feels_like_layer;
-    s_text_layers[6] = s_temp_low_layer;
-    s_text_layers[7] = s_temp_high_layer;
+    s_text_layers[4] = s_widget_nw_layer;
+    s_text_layers[5] = s_widget_ne_layer;
+    s_text_layers[6] = s_widget_sw_layer;
+    s_text_layers[7] = s_widget_se_layer;
 
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
@@ -247,10 +263,10 @@ static void prv_window_unload(Window *window) {
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
-    fctx_text_layer_destroy(s_temp_low_layer);
-    fctx_text_layer_destroy(s_temp_high_layer);
-    fctx_text_layer_destroy(s_feels_like_layer);
-    fctx_text_layer_destroy(s_humidity_layer);
+    fctx_text_layer_destroy(s_widget_sw_layer);
+    fctx_text_layer_destroy(s_widget_se_layer);
+    fctx_text_layer_destroy(s_widget_ne_layer);
+    fctx_text_layer_destroy(s_widget_nw_layer);
     fctx_text_layer_destroy(s_temperature_layer);
     fctx_text_layer_destroy(s_weather_icon_layer);
     fctx_text_layer_destroy(s_date_layer);
