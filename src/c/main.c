@@ -8,6 +8,7 @@ static Window *s_window;
 static FctxLayer *s_root_layer;
 static FctxLayer *s_grid_layer;
 static FctxTextLayer *s_time_layer;
+static FctxTextLayer *s_date_layer;
 
 static EventHandle s_tick_timer_event_handle;
 
@@ -43,9 +44,15 @@ static void prv_grid_layer_update_proc(FctxLayer *this, FContext *fctx) {
 
 static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     logf();
-    static char s[8];
-    strftime(s, sizeof(s), clock_is_24h_style() ? "%k:%M" : "%l:%M", tick_time);
-    fctx_text_layer_set_text(s_time_layer, s);
+    static char buf_time[8];
+    strftime(buf_time, sizeof(buf_time), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
+    fctx_text_layer_set_text(s_time_layer, buf_time + ((buf_time[0] == '0') ? 1 : 0));
+
+    if (units_changed & DAY_UNIT) {
+        static char buf_date[16];
+        strftime(buf_date, sizeof(buf_date), "%a, %b %d", tick_time);
+        fctx_text_layer_set_text(s_date_layer, buf_date);
+    }
 }
 
 static void prv_window_load(Window *window) {
@@ -61,11 +68,19 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_alignment(s_time_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_time_layer, FTextAnchorTop);
     fctx_text_layer_set_color(s_time_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_time_layer, 50);
+    fctx_text_layer_set_text_size(s_time_layer, 56);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_time_layer));
 
+    s_date_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH / 2, 70));
+    fctx_text_layer_set_font(s_date_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
+    fctx_text_layer_set_alignment(s_date_layer, GTextAlignmentCenter);
+    fctx_text_layer_set_anchor(s_date_layer, FTextAnchorBottom);
+    fctx_text_layer_set_color(s_date_layer, GColorWhite);
+    fctx_text_layer_set_text_size(s_date_layer, 18);
+    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_date_layer));
+
     time_t now = time(NULL);
-    prv_tick_handler(localtime(&now), MINUTE_UNIT);
+    prv_tick_handler(localtime(&now), DAY_UNIT | MINUTE_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
 
     window_set_background_color(window, GColorBlack);
@@ -75,6 +90,7 @@ static void prv_window_unload(Window *window) {
     logf();
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
+    fctx_text_layer_destroy(s_date_layer);
     fctx_text_layer_destroy(s_time_layer);
     fctx_layer_destroy(s_grid_layer);
     fctx_layer_destroy(s_root_layer);
