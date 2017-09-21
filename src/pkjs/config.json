@@ -109,6 +109,10 @@
                     {
                         "label": "Battery",
                         "value": "5"
+                    },
+                    {
+                        "label": "Steps",
+                        "value": "6"
                     }
                 ],
                 "group": "widget"
@@ -142,6 +146,10 @@
                     {
                         "label": "Battery",
                         "value": "5"
+                    },
+                    {
+                        "label": "Steps",
+                        "value": "6"
                     }
                 ],
                 "group": "widget"
@@ -175,6 +183,10 @@
                     {
                         "label": "Battery",
                         "value": "5"
+                    },
+                    {
+                        "label": "Steps",
+                        "value": "6"
                     }
                 ],
                 "group": "widget"
@@ -208,6 +220,10 @@
                     {
                         "label": "Battery",
                         "value": "5"
+                    },
+                    {
+                        "label": "Steps",
+                        "value": "6"
                     }
                 ],
                 "group": "widget"

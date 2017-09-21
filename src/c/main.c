@@ -18,6 +18,7 @@ typedef enum {
     WidgetTypeLowTemperature,
     WidgetTypeHighTemperature,
     WidgetTypeBattery,
+    WidgetTypeSteps,
     WidgetTypeEnd
 } WidgetType;
 
@@ -70,6 +71,7 @@ static EventHandle s_tick_timer_event_handle;
 static EventHandle s_weather_event_handle;
 static EventHandle s_settings_event_handle;
 static EventHandle s_battery_state_event_handle;
+static EventHandle s_health_event_handle;
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -154,6 +156,23 @@ static void prv_battery_state_handler(BatteryChargeState charge_state) {
     fctx_layer_mark_dirty(s_root_layer);
 }
 
+static void prv_health_handler(HealthEventType event, void *context) {
+    logf();
+    if (event == HealthEventSignificantUpdate || event == HealthEventMovementUpdate) {
+        time_t start = time_start_of_today();
+        time_t end = time(NULL);
+        HealthServiceAccessibilityMask mask = health_service_metric_accessible(HealthMetricStepCount, start, end);
+        if (mask & HealthServiceAccessibilityMaskAvailable) {
+            HealthValue steps = health_service_sum_today(HealthMetricStepCount);
+            char *s = s_widget_buffers[WidgetTypeSteps];
+            if (steps < 1000) snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld", steps);
+            else snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld.%ldK", steps / 1000, steps / 1000 % 10);
+        }
+
+        fctx_layer_mark_dirty(s_root_layer);
+    }
+}
+
 static void prv_settings_handler(void *context) {
     logf();
     time_t now = time(NULL);
@@ -181,6 +200,18 @@ static void prv_settings_handler(void *context) {
     } else if (!needs_battery && s_battery_state_event_handle) {
         events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     }
+
+    bool needs_health = widget_nw == WidgetTypeSteps || widget_ne == WidgetTypeSteps
+                                   || widget_sw == WidgetTypeSteps || widget_se == WidgetTypeSteps;
+    if (needs_health && !s_health_event_handle) {
+        prv_health_handler(HealthEventSignificantUpdate, NULL);
+        s_health_event_handle = events_health_service_events_subscribe(prv_health_handler, NULL);
+    } else if (!needs_health && s_health_event_handle) {
+        events_health_service_events_unsubscribe(s_health_event_handle);
+    }
+
+    connection_vibes_enable_health(needs_health);
+    hourly_vibes_enable_health(needs_health);
 
     fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[widget_nw]);
     fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[widget_ne]);
@@ -283,19 +314,14 @@ static void prv_window_load(Window *window) {
 
 static void prv_window_unload(Window *window) {
     logf();
+    if (s_health_event_handle) events_health_service_events_unsubscribe(s_health_event_handle);
     if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
-    fctx_text_layer_destroy(s_widget_sw_layer);
-    fctx_text_layer_destroy(s_widget_se_layer);
-    fctx_text_layer_destroy(s_widget_ne_layer);
-    fctx_text_layer_destroy(s_widget_nw_layer);
-    fctx_text_layer_destroy(s_temperature_layer);
-    fctx_text_layer_destroy(s_weather_icon_layer);
-    fctx_text_layer_destroy(s_date_layer);
-    fctx_text_layer_destroy(s_time_layer);
+    for(uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) fctx_text_layer_destroy(s_text_layers[i]);
+
     fctx_layer_destroy(s_grid_layer);
     fctx_layer_destroy(s_root_layer);
 }
