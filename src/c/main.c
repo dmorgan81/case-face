@@ -20,6 +20,7 @@ static FctxTextLayer *s_feels_like_layer;
 static FctxTextLayer *s_temp_low_layer;
 static FctxTextLayer *s_temp_high_layer;
 
+static GPoint s_weather_icon_origin;
 static FctxTextLayer* s_text_layers[8];
 
 typedef struct {
@@ -108,8 +109,7 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
         weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
     fctx_text_layer_set_text(s_weather_icon_layer, weather_icon.s);
 
-    GPoint origin = fctx_layer_get_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
-    origin = gpoint_add(origin, weather_icon.p);
+    GPoint origin = gpoint_add(s_weather_icon_origin, weather_icon.p);
     fctx_layer_set_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer), origin);
 
     static char buf_temperature[8];
@@ -179,6 +179,7 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_color(s_weather_icon_layer, GColorWhite);
     fctx_text_layer_set_text_size(s_weather_icon_layer, 36);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
+    s_weather_icon_origin = fctx_layer_get_origin(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
 
     s_temperature_layer = fctx_text_layer_create(GPoint(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25));
     fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_ROBOTO_REGULAR_FFONT);
