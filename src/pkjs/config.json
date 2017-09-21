@@ -105,6 +105,10 @@
                     {
                         "label": "High Temperature",
                         "value": "4"
+                    },
+                    {
+                        "label": "Battery",
+                        "value": "5"
                     }
                 ],
                 "group": "widget"
@@ -134,6 +138,10 @@
                     {
                         "label": "High Temperature",
                         "value": "4"
+                    },
+                    {
+                        "label": "Battery",
+                        "value": "5"
                     }
                 ],
                 "group": "widget"
@@ -163,6 +171,10 @@
                     {
                         "label": "High Temperature",
                         "value": "4"
+                    },
+                    {
+                        "label": "Battery",
+                        "value": "5"
                     }
                 ],
                 "group": "widget"
@@ -192,6 +204,10 @@
                     {
                         "label": "High Temperature",
                         "value": "4"
+                    },
+                    {
+                        "label": "Battery",
+                        "value": "5"
                     }
                 ],
                 "group": "widget"

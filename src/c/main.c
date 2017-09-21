@@ -17,6 +17,7 @@ typedef enum {
     WidgetTypeFeelsLike,
     WidgetTypeLowTemperature,
     WidgetTypeHighTemperature,
+    WidgetTypeBattery,
     WidgetTypeEnd
 } WidgetType;
 
@@ -68,6 +69,7 @@ static const WeatherIcon const s_weather_icons_night[] = {
 static EventHandle s_tick_timer_event_handle;
 static EventHandle s_weather_event_handle;
 static EventHandle s_settings_event_handle;
+static EventHandle s_battery_state_event_handle;
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -116,6 +118,7 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus status, void *context) {
+    logf();
     WeatherIcon weather_icon;
     if (info->condition == GenericWeatherConditionUnknown)
         weather_icon = s_weather_icon_na;
@@ -144,6 +147,13 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     snprintf(buf_temp_high, WIDGET_BUF_SIZEOF(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
 }
 
+static void prv_battery_state_handler(BatteryChargeState charge_state) {
+    logf();
+    char *s = s_widget_buffers[WidgetTypeBattery];
+    snprintf(s, WIDGET_BUF_SIZEOF(s), "BA: %d%%", charge_state.charge_percent);
+    fctx_layer_mark_dirty(s_root_layer);
+}
+
 static void prv_settings_handler(void *context) {
     logf();
     time_t now = time(NULL);
@@ -158,10 +168,24 @@ static void prv_settings_handler(void *context) {
         fctx_text_layer_set_color(s_text_layers[i], enamel_get_COLOR_TEXT());
     }
 
-    fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[atoi(enamel_get_WIDGET_NW())]);
-    fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[atoi(enamel_get_WIDGET_NE())]);
-    fctx_text_layer_set_text(s_widget_sw_layer, s_widget_buffers[atoi(enamel_get_WIDGET_SW())]);
-    fctx_text_layer_set_text(s_widget_se_layer, s_widget_buffers[atoi(enamel_get_WIDGET_SE())]);
+    WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
+    WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
+    WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
+    WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
+
+    bool needs_battery = widget_nw == WidgetTypeBattery || widget_ne == WidgetTypeBattery
+                                    || widget_sw == WidgetTypeBattery || widget_se == WidgetTypeBattery;
+    if (needs_battery && !s_battery_state_event_handle) {
+        prv_battery_state_handler(battery_state_service_peek());
+        s_battery_state_event_handle = events_battery_state_service_subscribe(prv_battery_state_handler);
+    } else if (!needs_battery && s_battery_state_event_handle) {
+        events_battery_state_service_unsubscribe(s_battery_state_event_handle);
+    }
+
+    fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[widget_nw]);
+    fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[widget_ne]);
+    fctx_text_layer_set_text(s_widget_sw_layer, s_widget_buffers[widget_sw]);
+    fctx_text_layer_set_text(s_widget_se_layer, s_widget_buffers[widget_se]);
 
     window_set_background_color(s_window, enamel_get_COLOR_BACKGROUND());
 }
@@ -259,6 +283,7 @@ static void prv_window_load(Window *window) {
 
 static void prv_window_unload(Window *window) {
     logf();
+    if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
