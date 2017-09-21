@@ -5,6 +5,30 @@
             {
                 "type": "heading",
                 "defaultValue": "Appearance"
+            },
+            {
+                "type": "color",
+                "messageKey": "COLOR_BACKGROUND",
+                "label": "Background Color",
+                "defaultValue": "000000",
+                "sunlight": false,
+                "allowGray": true
+            },
+            {
+                "type": "color",
+                "messageKey": "COLOR_TEXT",
+                "label": "Text Color",
+                "defaultValue": "FFFFFF",
+                "sunlight": false,
+                "allowGray": false
+            },
+            {
+                "type": "color",
+                "messageKey": "COLOR_PINLINE",
+                "label": "Pinline Color",
+                "defaultValue": "555555",
+                "sunlight": false,
+                "allowGray": true
             }
         ]
     },

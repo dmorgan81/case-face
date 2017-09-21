@@ -20,6 +20,8 @@ static FctxTextLayer *s_feels_like_layer;
 static FctxTextLayer *s_temp_low_layer;
 static FctxTextLayer *s_temp_high_layer;
 
+static FctxTextLayer* s_text_layers[8];
+
 typedef struct {
     char *s;
     GPoint p;
@@ -66,6 +68,8 @@ static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
 
 static void prv_grid_layer_update_proc(FctxLayer *this, FContext *fctx) {
     logf();
+    fctx_set_fill_color(fctx, enamel_get_COLOR_PINLINE());
+
     GRect line_rect = GRect(0, 0, 1, 1);
     fctx_set_scale(fctx, FPointOne, FPointI(PBL_DISPLAY_WIDTH, 2));
 
@@ -136,6 +140,12 @@ static void prv_settings_handler(void *context) {
 
     connection_vibes_set_state(atoi(enamel_get_CONNECTION_VIBE()));
     hourly_vibes_set_enabled(enamel_get_HOURLY_VIBE());
+
+    for (uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) {
+        fctx_text_layer_set_color(s_text_layers[i], enamel_get_COLOR_TEXT());
+    }
+
+    window_set_background_color(s_window, enamel_get_COLOR_BACKGROUND());
 }
 
 static void prv_window_load(Window *window) {
@@ -210,6 +220,15 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_temp_high_layer, 16);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temp_high_layer));
 
+    s_text_layers[0] = s_time_layer;
+    s_text_layers[1] = s_date_layer;
+    s_text_layers[2] = s_weather_icon_layer;
+    s_text_layers[3] = s_temperature_layer;
+    s_text_layers[4] = s_humidity_layer;
+    s_text_layers[5] = s_feels_like_layer;
+    s_text_layers[6] = s_temp_low_layer;
+    s_text_layers[7] = s_temp_high_layer;
+
     time_t now = time(NULL);
     prv_tick_handler(localtime(&now), DAY_UNIT | MINUTE_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
@@ -218,8 +237,6 @@ static void prv_window_load(Window *window) {
 
     prv_settings_handler(NULL);
     s_settings_event_handle = enamel_settings_received_subscribe(prv_settings_handler, NULL);
-
-    window_set_background_color(window, GColorBlack);
 }
 
 static void prv_window_unload(Window *window) {

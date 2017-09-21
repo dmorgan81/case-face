@@ -35,6 +35,9 @@
     },
     "messageKeys": [
       "APP_READY",
+      "COLOR_BACKGROUND",
+      "COLOR_TEXT",
+      "COLOR_PINLINE",
       "HOURLY_VIBE",
       "CONNECTION_VIBE",
       "WEATHER_UNIT",
