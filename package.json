@@ -35,6 +35,7 @@
     },
     "messageKeys": [
       "APP_READY",
+      "LEADING_ZERO",
       "COLOR_BACKGROUND",
       "COLOR_TEXT",
       "COLOR_PINLINE",

@@ -7,6 +7,12 @@
                 "defaultValue": "Appearance"
             },
             {
+                "type": "toggle",
+                "messageKey": "LEADING_ZERO",
+                "label": "Leading Zero",
+                "defaultValue": false
+            },
+            {
                 "type": "color",
                 "messageKey": "COLOR_BACKGROUND",
                 "label": "Background Color",

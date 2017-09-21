@@ -92,7 +92,8 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     logf();
     static char buf_time[8];
     strftime(buf_time, sizeof(buf_time), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
-    fctx_text_layer_set_text(s_time_layer, buf_time + ((buf_time[0] == '0') ? 1 : 0));
+    if (enamel_get_LEADING_ZERO()) fctx_text_layer_set_text(s_time_layer, buf_time);
+    else fctx_text_layer_set_text(s_time_layer, buf_time + ((buf_time[0] == '0') ? 1 : 0));
 
     if (units_changed & DAY_UNIT) {
         static char buf_date[16];
@@ -136,6 +137,9 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
 
 static void prv_settings_handler(void *context) {
     logf();
+    time_t now = time(NULL);
+    prv_tick_handler(localtime(&now), DAY_UNIT | MONTH_UNIT);
+
     prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
 
     connection_vibes_set_state(atoi(enamel_get_CONNECTION_VIBE()));
@@ -230,10 +234,7 @@ static void prv_window_load(Window *window) {
     s_text_layers[6] = s_temp_low_layer;
     s_text_layers[7] = s_temp_high_layer;
 
-    time_t now = time(NULL);
-    prv_tick_handler(localtime(&now), DAY_UNIT | MINUTE_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
-
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
 
     prv_settings_handler(NULL);
