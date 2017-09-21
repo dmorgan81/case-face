@@ -1,0 +1,95 @@
+[
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Appearance"
+            }
+        ]
+    },
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Vibes"
+            }
+        ]
+    },
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Weather"
+            },
+            {
+                "type": "radiogroup",
+                "messageKey": "WEATHER_UNIT",
+                "label": "Unit",
+                "defaultValue": "0",
+                "options": [
+                    {
+                        "label": "Celsius",
+                        "value": "0"
+                    },
+                    {
+                        "label": "Fahrenheit",
+                        "value": "1"
+                    }
+                ]
+            },
+            {
+                "type": "toggle",
+                "messageKey": "WEATHER_USE_GPS",
+                "label": "Use GPS",
+                "defaultValue": true,
+                "capabilities": [
+                    "NOT_PLATFORM_APLITE"
+                ]
+            },
+            {
+                "type": "input",
+                "messageKey": "WEATHER_LOCATION_NAME",
+                "label": "Location",
+                "capabilities": [
+                    "NOT_PLATFORM_APLITE"
+                ]
+            },
+            {
+                "type": "select",
+                "messageKey": "WEATHER_INTERVAL",
+                "label": "Interval",
+                "defaultValue": "60",
+                "options": [
+                    {
+                        "label": "15 Minutes",
+                        "value": "15"
+                    },
+                    {
+                        "label": "30 Minutes",
+                        "value": "30"
+                    },
+                    {
+                        "label": "1 Hour",
+                        "value": "60"
+                    },
+                    {
+                        "label": "90 Minutes",
+                        "value": "90"
+                    },
+                    {
+                        "label": "2 Hours",
+                        "value": "120"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "submit",
+        "id": "save",
+        "defaultValue": "Save"
+    }
+]

@@ -8,8 +8,12 @@
   "private": true,
   "dependencies": {
     "@smallstoneapps/linked-list": "^1.4.0",
+    "enamel": "^1.2.5",
+    "pebble-clay": "^1.0.4",
     "pebble-events": "^1.2.0",
-    "pebble-fctx": "^1.6.2"
+    "pebble-fctx": "^1.6.2",
+    "pebble-generic-weather": "file:../pebble-generic-weather",
+    "pebble-geocode-mapquest": "^1.0.2"
   },
   "devDependencies": {
     "pebble-fctx-compiler": "^1.2.2"
@@ -27,7 +31,13 @@
     "watchapp": {
       "watchface": true
     },
-    "messageKeys": [],
+    "messageKeys": [
+      "APP_READY",
+      "WEATHER_UNIT",
+      "WEATHER_USE_GPS",
+      "WEATHER_LOCATION_NAME",
+      "WEATHER_INTERVAL"
+    ],
     "resources": {
       "media": [
         {
