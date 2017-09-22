@@ -94,11 +94,11 @@
                         "label": "Status",
                         "value": [
                             {
-                                "label": "Battery",
+                                "label": "Battery (BT)",
                                 "value": "5"
                             },
                             {
-                                "label": "Connection",
+                                "label": "Connection (CN)",
                                 "value": "7"
                             }
                         ]
@@ -107,19 +107,19 @@
                         "label": "Weather",
                         "value": [
                             {
-                                "label": "Humidity",
+                                "label": "Humidity (HU)",
                                 "value": "1"
                             },
                             {
-                                "label": "Feels Like Temperature",
+                                "label": "Feels Like Temperature (FL)",
                                 "value": "2"
                             },
                             {
-                                "label": "Low Temperature",
+                                "label": "Low Temperature (LO)",
                                 "value": "3"
                             },
                             {
-                                "label": "High Temperature",
+                                "label": "High Temperature (HI)",
                                 "value": "4"
                             }
                         ]
@@ -128,7 +128,7 @@
                         "label": "Health",
                         "value": [
                             {
-                                "label": "Steps",
+                                "label": "Steps (ST)",
                                 "value": "6"
                             }
                         ]
@@ -150,11 +150,11 @@
                         "label": "Status",
                         "value": [
                             {
-                                "label": "Battery",
+                                "label": "Battery (BT)",
                                 "value": "5"
                             },
                             {
-                                "label": "Connection",
+                                "label": "Connection (CN)",
                                 "value": "7"
                             }
                         ]
@@ -163,19 +163,19 @@
                         "label": "Weather",
                         "value": [
                             {
-                                "label": "Humidity",
+                                "label": "Humidity (HU)",
                                 "value": "1"
                             },
                             {
-                                "label": "Feels Like Temperature",
+                                "label": "Feels Like Temperature (FL)",
                                 "value": "2"
                             },
                             {
-                                "label": "Low Temperature",
+                                "label": "Low Temperature (LO)",
                                 "value": "3"
                             },
                             {
-                                "label": "High Temperature",
+                                "label": "High Temperature (HI)",
                                 "value": "4"
                             }
                         ]
@@ -184,7 +184,7 @@
                         "label": "Health",
                         "value": [
                             {
-                                "label": "Steps",
+                                "label": "Steps (ST)",
                                 "value": "6"
                             }
                         ]
@@ -206,11 +206,11 @@
                         "label": "Status",
                         "value": [
                             {
-                                "label": "Battery",
+                                "label": "Battery (BT)",
                                 "value": "5"
                             },
                             {
-                                "label": "Connection",
+                                "label": "Connection (CN)",
                                 "value": "7"
                             }
                         ]
@@ -219,19 +219,19 @@
                         "label": "Weather",
                         "value": [
                             {
-                                "label": "Humidity",
+                                "label": "Humidity (HU)",
                                 "value": "1"
                             },
                             {
-                                "label": "Feels Like Temperature",
+                                "label": "Feels Like Temperature (FL)",
                                 "value": "2"
                             },
                             {
-                                "label": "Low Temperature",
+                                "label": "Low Temperature (LO)",
                                 "value": "3"
                             },
                             {
-                                "label": "High Temperature",
+                                "label": "High Temperature (HI)",
                                 "value": "4"
                             }
                         ]
@@ -240,7 +240,7 @@
                         "label": "Health",
                         "value": [
                             {
-                                "label": "Steps",
+                                "label": "Steps (ST)",
                                 "value": "6"
                             }
                         ]
@@ -262,11 +262,11 @@
                         "label": "Status",
                         "value": [
                             {
-                                "label": "Battery",
+                                "label": "Battery (BT)",
                                 "value": "5"
                             },
                             {
-                                "label": "Connection",
+                                "label": "Connection (CN)",
                                 "value": "7"
                             }
                         ]
@@ -275,19 +275,19 @@
                         "label": "Weather",
                         "value": [
                             {
-                                "label": "Humidity",
+                                "label": "Humidity (HU)",
                                 "value": "1"
                             },
                             {
-                                "label": "Feels Like Temperature",
+                                "label": "Feels Like Temperature (FL)",
                                 "value": "2"
                             },
                             {
-                                "label": "Low Temperature",
+                                "label": "Low Temperature (LO)",
                                 "value": "3"
                             },
                             {
-                                "label": "High Temperature",
+                                "label": "High Temperature (HI)",
                                 "value": "4"
                             }
                         ]
@@ -296,7 +296,7 @@
                         "label": "Health",
                         "value": [
                             {
-                                "label": "Steps",
+                                "label": "Steps (ST)",
                                 "value": "6"
                             }
                         ]

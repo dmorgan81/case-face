@@ -1,5 +1,5 @@
 {
-  "name": "offu",
+  "name": "case-face",
   "author": "David Morgan",
   "version": "1.0.0",
   "keywords": [
@@ -21,11 +21,12 @@
     "pebble-fctx-compiler": "^1.2.2"
   },
   "pebble": {
-    "displayName": "offu",
+    "displayName": "CaseFace",
     "uuid": "9fee63ee-eb21-4f71-9555-7b58926dda84",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
+      "aplite",
       "basalt",
       "diorite"
     ],
