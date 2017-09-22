@@ -3,7 +3,7 @@
 
 typedef struct FctxTextLayer FctxTextLayer;
 
-FctxTextLayer *fctx_text_layer_create(const GPoint origin);
+FctxTextLayer *fctx_text_layer_create(const GRect frame);
 void fctx_text_layer_destroy(FctxTextLayer *this);
 FctxLayer *fctx_text_layer_get_fctx_layer(const FctxTextLayer *this);
 void fctx_text_layer_set_text(FctxTextLayer *this, const char *text);

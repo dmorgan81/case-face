@@ -19,7 +19,9 @@ static bool prv_layer_children_foreach(void *obj, void *fctx) {
     if (this->update_proc && !hidden) {
         fctx_set_scale(fctx, FPointOne, FPointOne);
         fctx_set_rotation(fctx, 0);
-        fctx_set_offset(fctx, g2fpoint(fctx_layer_get_origin(this)));
+
+        GRect frame = fctx_layer_get_frame(this);
+        fctx_set_offset(fctx, g2fpoint(frame.origin));
 
         this->update_proc(this, fctx);
     }
@@ -40,16 +42,16 @@ static void prv_update_proc(Layer *layer, GContext *ctx) {
 FctxLayer *window_get_root_fctx_layer(const Window *window) {
     logf();
     Layer *root_layer = window_get_root_layer(window);
-    FctxLayer *this = fctx_layer_create(GPointZero);
+    FctxLayer *this = fctx_layer_create(GRect(0, 0, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     layer_set_update_proc(this->layer, prv_update_proc);
     layer_add_child(root_layer, this->layer);
     this->children = linked_list_create_root();
     return this;
 }
 
-FctxLayer *fctx_layer_create(const GPoint origin) {
+FctxLayer *fctx_layer_create(const GRect frame) {
     logf();
-    Layer *layer = layer_create_with_data(GRect(origin.x, origin.y, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT), sizeof(FctxLayer));
+    Layer *layer = layer_create_with_data(frame, sizeof(FctxLayer));
     FctxLayer *this = layer_get_data(layer);
     this->layer = layer;
     this->update_proc = NULL;
@@ -59,9 +61,9 @@ FctxLayer *fctx_layer_create(const GPoint origin) {
     return this;
 }
 
-FctxLayer *fctx_layer_create_with_data(const GPoint origin, const size_t size) {
+FctxLayer *fctx_layer_create_with_data(const GRect frame, const size_t size) {
     logf();
-    FctxLayer *this = fctx_layer_create(origin);
+    FctxLayer *this = fctx_layer_create(frame);
     this->data = malloc(size);
     return this;
 }
@@ -139,15 +141,22 @@ void fctx_layer_set_hidden(FctxLayer *this, bool hidden) {
     layer_set_hidden(this->layer, hidden);
 }
 
-GPoint fctx_layer_get_origin(const FctxLayer *this) {
+GRect fctx_layer_get_frame(const FctxLayer *this) {
     logf();
-    GRect frame = layer_get_frame(this->layer);
-    return frame.origin;
+    return layer_get_frame(this->layer);
 }
 
-void fctx_layer_set_origin(FctxLayer *this, GPoint origin) {
+void fctx_layer_set_frame(FctxLayer *this, GRect frame) {
     logf();
-    GRect frame = layer_get_frame(this->layer);
-    frame.origin = origin;
     layer_set_frame(this->layer, frame);
+}
+
+GRect fctx_layer_get_bounds(const FctxLayer *this) {
+    logf();
+    return layer_get_bounds(this->layer);
+}
+
+void fctx_layer_set_bounds(FctxLayer *this, GRect bounds) {
+    logf();
+    layer_set_bounds(this->layer, bounds);
 }

@@ -19,10 +19,20 @@ static void prv_update_proc(FctxLayer *layer, FContext *fctx) {
     FctxTextLayer *this = fctx_layer_get_data(layer);
     if (!this->text || this->text_size <= 0 || gcolor_equal(this->color, GColorClear)) return;
 
+    GRect frame = fctx_layer_get_frame(layer);
     FFont *font = ffont_create_from_resource(this->font);
     if (!font) return;
 
-    fctx_set_text_em_height(fctx, font, this->text_size);
+    int16_t font_size = this->text_size;
+    fixed_t str_width;
+    fixed_t width = INT_TO_FIXED(frame.size.w);
+
+    do {
+        fctx_set_text_em_height(fctx, font, font_size--);
+        str_width = fctx_string_width(fctx, this->text, font);
+    } while (str_width > width);
+
+    fctx_set_text_em_height(fctx, font, ++font_size);
     fctx_set_fill_color(fctx, this->color);
 
     fctx_begin_fill(fctx);
@@ -32,9 +42,9 @@ static void prv_update_proc(FctxLayer *layer, FContext *fctx) {
     ffont_destroy(font);
 }
 
-FctxTextLayer *fctx_text_layer_create(const GPoint origin) {
+FctxTextLayer *fctx_text_layer_create(const GRect frame) {
     logf();
-    FctxLayer *layer = fctx_layer_create_with_data(origin, sizeof(FctxTextLayer));
+    FctxLayer *layer = fctx_layer_create_with_data(frame, sizeof(FctxTextLayer));
     fctx_layer_set_update_proc(layer, prv_update_proc);
     FctxTextLayer *this = fctx_layer_get_data(layer);
     this->layer = layer;
