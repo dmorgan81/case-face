@@ -91,28 +91,47 @@
                         "value": "0"
                     },
                     {
-                        "label": "Humidity",
-                        "value": "1"
+                        "label": "Status",
+                        "value": [
+                            {
+                                "label": "Battery",
+                                "value": "5"
+                            },
+                            {
+                                "label": "Connection",
+                                "value": "7"
+                            }
+                        ]
                     },
                     {
-                        "label": "Feels Like Temperature",
-                        "value": "2"
+                        "label": "Weather",
+                        "value": [
+                            {
+                                "label": "Humidity",
+                                "value": "1"
+                            },
+                            {
+                                "label": "Feels Like Temperature",
+                                "value": "2"
+                            },
+                            {
+                                "label": "Low Temperature",
+                                "value": "3"
+                            },
+                            {
+                                "label": "High Temperature",
+                                "value": "4"
+                            }
+                        ]
                     },
                     {
-                        "label": "Low Temperature",
-                        "value": "3"
-                    },
-                    {
-                        "label": "High Temperature",
-                        "value": "4"
-                    },
-                    {
-                        "label": "Battery",
-                        "value": "5"
-                    },
-                    {
-                        "label": "Steps",
-                        "value": "6"
+                        "label": "Health",
+                        "value": [
+                            {
+                                "label": "Steps",
+                                "value": "6"
+                            }
+                        ]
                     }
                 ],
                 "group": "widget"
@@ -128,28 +147,47 @@
                         "value": "0"
                     },
                     {
-                        "label": "Humidity",
-                        "value": "1"
+                        "label": "Status",
+                        "value": [
+                            {
+                                "label": "Battery",
+                                "value": "5"
+                            },
+                            {
+                                "label": "Connection",
+                                "value": "7"
+                            }
+                        ]
                     },
                     {
-                        "label": "Feels Like Temperature",
-                        "value": "2"
+                        "label": "Weather",
+                        "value": [
+                            {
+                                "label": "Humidity",
+                                "value": "1"
+                            },
+                            {
+                                "label": "Feels Like Temperature",
+                                "value": "2"
+                            },
+                            {
+                                "label": "Low Temperature",
+                                "value": "3"
+                            },
+                            {
+                                "label": "High Temperature",
+                                "value": "4"
+                            }
+                        ]
                     },
                     {
-                        "label": "Low Temperature",
-                        "value": "3"
-                    },
-                    {
-                        "label": "High Temperature",
-                        "value": "4"
-                    },
-                    {
-                        "label": "Battery",
-                        "value": "5"
-                    },
-                    {
-                        "label": "Steps",
-                        "value": "6"
+                        "label": "Health",
+                        "value": [
+                            {
+                                "label": "Steps",
+                                "value": "6"
+                            }
+                        ]
                     }
                 ],
                 "group": "widget"
@@ -165,28 +203,47 @@
                         "value": "0"
                     },
                     {
-                        "label": "Humidity",
-                        "value": "1"
+                        "label": "Status",
+                        "value": [
+                            {
+                                "label": "Battery",
+                                "value": "5"
+                            },
+                            {
+                                "label": "Connection",
+                                "value": "7"
+                            }
+                        ]
                     },
                     {
-                        "label": "Feels Like Temperature",
-                        "value": "2"
+                        "label": "Weather",
+                        "value": [
+                            {
+                                "label": "Humidity",
+                                "value": "1"
+                            },
+                            {
+                                "label": "Feels Like Temperature",
+                                "value": "2"
+                            },
+                            {
+                                "label": "Low Temperature",
+                                "value": "3"
+                            },
+                            {
+                                "label": "High Temperature",
+                                "value": "4"
+                            }
+                        ]
                     },
                     {
-                        "label": "Low Temperature",
-                        "value": "3"
-                    },
-                    {
-                        "label": "High Temperature",
-                        "value": "4"
-                    },
-                    {
-                        "label": "Battery",
-                        "value": "5"
-                    },
-                    {
-                        "label": "Steps",
-                        "value": "6"
+                        "label": "Health",
+                        "value": [
+                            {
+                                "label": "Steps",
+                                "value": "6"
+                            }
+                        ]
                     }
                 ],
                 "group": "widget"
@@ -202,28 +259,47 @@
                         "value": "0"
                     },
                     {
-                        "label": "Humidity",
-                        "value": "1"
+                        "label": "Status",
+                        "value": [
+                            {
+                                "label": "Battery",
+                                "value": "5"
+                            },
+                            {
+                                "label": "Connection",
+                                "value": "7"
+                            }
+                        ]
                     },
                     {
-                        "label": "Feels Like Temperature",
-                        "value": "2"
+                        "label": "Weather",
+                        "value": [
+                            {
+                                "label": "Humidity",
+                                "value": "1"
+                            },
+                            {
+                                "label": "Feels Like Temperature",
+                                "value": "2"
+                            },
+                            {
+                                "label": "Low Temperature",
+                                "value": "3"
+                            },
+                            {
+                                "label": "High Temperature",
+                                "value": "4"
+                            }
+                        ]
                     },
                     {
-                        "label": "Low Temperature",
-                        "value": "3"
-                    },
-                    {
-                        "label": "High Temperature",
-                        "value": "4"
-                    },
-                    {
-                        "label": "Battery",
-                        "value": "5"
-                    },
-                    {
-                        "label": "Steps",
-                        "value": "6"
+                        "label": "Health",
+                        "value": [
+                            {
+                                "label": "Steps",
+                                "value": "6"
+                            }
+                        ]
                     }
                 ],
                 "group": "widget"

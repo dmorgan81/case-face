@@ -19,6 +19,7 @@ typedef enum {
     WidgetTypeHighTemperature,
     WidgetTypeBattery,
     WidgetTypeSteps,
+    WidgetTypeConnection,
     WidgetTypeEnd
 } WidgetType;
 
@@ -72,6 +73,7 @@ static EventHandle s_weather_event_handle;
 static EventHandle s_settings_event_handle;
 static EventHandle s_battery_state_event_handle;
 static EventHandle s_health_event_handle;
+static EventHandle s_connection_event_handle;
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -174,6 +176,13 @@ static void prv_health_handler(HealthEventType event, void *context) {
     }
 }
 
+static void prv_connection_handler(bool connected) {
+    logf();
+    char *s = s_widget_buffers[WidgetTypeConnection];
+    snprintf(s, WIDGET_BUF_SIZEOF(s), "CON: %s", connected ? "ON" : "OFF");
+    fctx_layer_mark_dirty(s_root_layer);
+}
+
 static void prv_settings_handler(void *context) {
     logf();
     time_t now = time(NULL);
@@ -200,6 +209,7 @@ static void prv_settings_handler(void *context) {
         s_battery_state_event_handle = events_battery_state_service_subscribe(prv_battery_state_handler);
     } else if (!needs_battery && s_battery_state_event_handle) {
         events_battery_state_service_unsubscribe(s_battery_state_event_handle);
+        s_battery_state_event_handle = NULL;
     }
 
     bool needs_health = widget_nw == WidgetTypeSteps || widget_ne == WidgetTypeSteps
@@ -209,6 +219,19 @@ static void prv_settings_handler(void *context) {
         s_health_event_handle = events_health_service_events_subscribe(prv_health_handler, NULL);
     } else if (!needs_health && s_health_event_handle) {
         events_health_service_events_unsubscribe(s_health_event_handle);
+        s_health_event_handle = NULL;
+    }
+
+    bool needs_connection = widget_nw == WidgetTypeConnection || widget_ne == WidgetTypeConnection
+                                          || widget_sw == WidgetTypeConnection || widget_se == WidgetTypeConnection;
+    if (needs_connection && !s_connection_event_handle) {
+        prv_connection_handler(connection_service_peek_pebble_app_connection());
+        s_connection_event_handle = events_connection_service_subscribe((ConnectionHandlers) {
+            .pebble_app_connection_handler = prv_connection_handler
+        });
+    } else if (!needs_connection && s_connection_event_handle) {
+        events_connection_service_unsubscribe(s_connection_event_handle);
+        s_connection_event_handle = NULL;
     }
 
     connection_vibes_enable_health(needs_health);
@@ -317,6 +340,7 @@ static void prv_window_load(Window *window) {
 
 static void prv_window_unload(Window *window) {
     logf();
+    if (s_connection_event_handle) events_connection_service_unsubscribe(s_connection_event_handle);
     if (s_health_event_handle) events_health_service_events_unsubscribe(s_health_event_handle);
     if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
