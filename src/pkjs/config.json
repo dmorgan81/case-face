@@ -132,6 +132,10 @@
                                 "value": "6"
                             },
                             {
+                                "label": "Distance (DI)",
+                                "value": "9"
+                            },
+                            {
                                 "label": "Heart Rate (HR)",
                                 "value": "8"
                             }
@@ -190,6 +194,10 @@
                             {
                                 "label": "Steps (ST)",
                                 "value": "6"
+                            },
+                            {
+                                "label": "Distance (DI)",
+                                "value": "9"
                             },
                             {
                                 "label": "Heart Rate (HR)",
@@ -252,6 +260,10 @@
                                 "value": "6"
                             },
                             {
+                                "label": "Distance (DI)",
+                                "value": "9"
+                            },
+                            {
                                 "label": "Heart Rate (HR)",
                                 "value": "8"
                             }
@@ -310,6 +322,10 @@
                             {
                                 "label": "Steps (ST)",
                                 "value": "6"
+                            },
+                            {
+                                "label": "Distance (DI)",
+                                "value": "9"
                             },
                             {
                                 "label": "Heart Rate (HR)",

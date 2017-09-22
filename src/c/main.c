@@ -21,6 +21,7 @@ typedef enum {
     WidgetTypeSteps,
     WidgetTypeConnection,
     WidgetTypeHeartRate,
+    WidgetTypeDistance,
     WidgetTypeEnd
 } WidgetType;
 
@@ -177,6 +178,23 @@ static void prv_health_handler(HealthEventType event, void *context) {
             else snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld.%ldK", steps / 1000, steps / 1000 % 10);
         }
 
+        mask = health_service_metric_accessible(HealthMetricWalkedDistanceMeters, start, end);
+        if (mask & HealthServiceAccessibilityMaskAvailable) {
+            HealthValue distance = health_service_sum_today(HealthMetricWalkedDistanceMeters);
+            MeasurementSystem system = health_service_get_measurement_system_for_display(HealthMetricWalkedDistanceMeters);
+            char *s = s_widget_buffers[WidgetTypeDistance];
+            if (system == MeasurementSystemMetric) {
+                if (distance < 100) snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %ldm", distance);
+                else if (distance < 1000) snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: .%ldkm", distance / 100);
+                else snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %ldkm", distance / 1000);
+            } else {
+                uint tenths = distance * 10 / 1609 % 10;
+                uint whole = distance / 1609;
+                if (whole < 10) snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %d.%dmi", whole, tenths);
+                else snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %dmi", whole);
+            }
+        }
+
         fctx_layer_mark_dirty(s_root_layer);
     }
 
@@ -189,6 +207,8 @@ static void prv_health_handler(HealthEventType event, void *context) {
             char *s = s_widget_buffers[WidgetTypeHeartRate];
             snprintf(s, WIDGET_BUF_SIZEOF(s), "HR: %ld", hr);
         }
+
+        fctx_layer_mark_dirty(s_root_layer);
     }
 #endif // PBL_PLATFORM_DIORITE
 }
@@ -233,6 +253,8 @@ static void prv_settings_handler(void *context) {
 #ifdef PBL_HEALTH
     bool needs_health = widget_nw == WidgetTypeSteps || widget_ne == WidgetTypeSteps
                                    || widget_sw == WidgetTypeSteps || widget_se == WidgetTypeSteps
+                                   || widget_nw == WidgetTypeDistance || widget_ne == WidgetTypeDistance
+                                   || widget_sw == WidgetTypeDistance || widget_se == WidgetTypeDistance
                                    || widget_nw == WidgetTypeHeartRate || widget_ne == WidgetTypeHeartRate
                                    || widget_sw == WidgetTypeHeartRate || widget_se == WidgetTypeHeartRate;
     if (needs_health && !s_health_event_handle) {
