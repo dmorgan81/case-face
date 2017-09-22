@@ -35,7 +35,7 @@ static FctxTextLayer *s_widget_ne_layer;
 static FctxTextLayer *s_widget_sw_layer;
 static FctxTextLayer *s_widget_se_layer;
 
-static GRect s_weather_icon_frame;
+static GPoint s_weather_icon_origin;
 static FctxTextLayer* s_text_layers[8];
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
@@ -130,9 +130,10 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
         weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
     fctx_text_layer_set_text(s_weather_icon_layer, weather_icon.s);
 
-    GPoint origin = gpoint_add(s_weather_icon_frame.origin, weather_icon.p);
-    s_weather_icon_frame.origin = origin;
-    fctx_layer_set_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer), s_weather_icon_frame);
+    GPoint origin = gpoint_add(s_weather_icon_origin, weather_icon.p);
+    GRect frame = fctx_layer_get_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
+    frame.origin = origin;
+    fctx_layer_set_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer), frame);
 
     static char buf_temperature[8];
     int unit = atoi(enamel_get_WEATHER_UNIT());
@@ -276,7 +277,8 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_color(s_weather_icon_layer, GColorWhite);
     fctx_text_layer_set_text_size(s_weather_icon_layer, 36);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
-    s_weather_icon_frame= fctx_layer_get_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
+    GRect frame = fctx_layer_get_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
+    s_weather_icon_origin= frame.origin;
 
     s_temperature_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_TEXT_FFONT);
