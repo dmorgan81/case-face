@@ -20,6 +20,7 @@ typedef enum {
     WidgetTypeBattery,
     WidgetTypeSteps,
     WidgetTypeConnection,
+    WidgetTypeHeartRate,
     WidgetTypeEnd
 } WidgetType;
 
@@ -178,8 +179,20 @@ static void prv_health_handler(HealthEventType event, void *context) {
 
         fctx_layer_mark_dirty(s_root_layer);
     }
+
+#ifdef PBL_PLATFORM_DIORITE
+    if (event == HealthEventSignificantUpdate || event == HealthEventHeartRateUpdate) {
+        time_t now = time(NULL);
+        HealthServiceAccessibilityMask mask = health_service_metric_accessible(HealthMetricHeartRateBPM, now, now);
+        if (mask & HealthServiceAccessibilityMaskAvailable) {
+            HealthValue hr = health_service_peek_current_value(HealthMetricHeartRateBPM);
+            char *s = s_widget_buffers[WidgetTypeHeartRate];
+            snprintf(s, WIDGET_BUF_SIZEOF(s), "HR: %ld", hr);
+        }
+    }
+#endif // PBL_PLATFORM_DIORITE
 }
-#endif
+#endif // PBL_HEALTH
 
 static void prv_connection_handler(bool connected) {
     logf();
@@ -219,7 +232,9 @@ static void prv_settings_handler(void *context) {
 
 #ifdef PBL_HEALTH
     bool needs_health = widget_nw == WidgetTypeSteps || widget_ne == WidgetTypeSteps
-                                   || widget_sw == WidgetTypeSteps || widget_se == WidgetTypeSteps;
+                                   || widget_sw == WidgetTypeSteps || widget_se == WidgetTypeSteps
+                                   || widget_nw == WidgetTypeHeartRate || widget_ne == WidgetTypeHeartRate
+                                   || widget_sw == WidgetTypeHeartRate || widget_se == WidgetTypeHeartRate;
     if (needs_health && !s_health_event_handle) {
         prv_health_handler(HealthEventSignificantUpdate, NULL);
         s_health_event_handle = events_health_service_events_subscribe(prv_health_handler, NULL);
