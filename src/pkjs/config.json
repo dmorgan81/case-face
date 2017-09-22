@@ -136,6 +136,10 @@
                                 "value": "9"
                             },
                             {
+                                "label": "Active Seconds (AS)",
+                                "value": "10"
+                            },
+                            {
                                 "label": "Heart Rate (HR)",
                                 "value": "8"
                             }
@@ -198,6 +202,10 @@
                             {
                                 "label": "Distance (DI)",
                                 "value": "9"
+                            },
+                            {
+                                "label": "Active Seconds (AS)",
+                                "value": "10"
                             },
                             {
                                 "label": "Heart Rate (HR)",
@@ -264,6 +272,10 @@
                                 "value": "9"
                             },
                             {
+                                "label": "Active Seconds (AS)",
+                                "value": "10"
+                            },
+                            {
                                 "label": "Heart Rate (HR)",
                                 "value": "8"
                             }
@@ -326,6 +338,10 @@
                             {
                                 "label": "Distance (DI)",
                                 "value": "9"
+                            },
+                            {
+                                "label": "Active Seconds (AS)",
+                                "value": "10"
                             },
                             {
                                 "label": "Heart Rate (HR)",

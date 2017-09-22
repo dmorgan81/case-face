@@ -22,6 +22,7 @@ typedef enum {
     WidgetTypeConnection,
     WidgetTypeHeartRate,
     WidgetTypeDistance,
+    WidgetTypeActiveSeconds,
     WidgetTypeEnd
 } WidgetType;
 
@@ -192,6 +193,21 @@ static void prv_health_handler(HealthEventType event, void *context) {
                 uint whole = distance / 1609;
                 if (whole < 10) snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %d.%dmi", whole, tenths);
                 else snprintf(s, WIDGET_BUF_SIZEOF(s), "DI: %dmi", whole);
+            }
+
+            mask = health_service_metric_accessible(HealthMetricActiveSeconds, start, end);
+            if (mask & HealthServiceAccessibilityMaskAvailable) {
+                HealthValue active_seconds = health_service_sum_today(HealthMetricActiveSeconds);
+                uint minutes = active_seconds / 60;
+                uint hours = minutes / 60;
+                minutes %= 60;
+
+                struct tm t = {
+                    .tm_hour = hours,
+                    .tm_min = minutes
+                };
+                char *s = s_widget_buffers[WidgetTypeActiveSeconds];
+                strftime(s, WIDGET_BUF_SIZEOF(s), "AS: %k:%M", &t);
             }
         }
 
