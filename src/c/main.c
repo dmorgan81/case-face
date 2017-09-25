@@ -207,7 +207,7 @@ static void prv_health_handler(HealthEventType event, void *context) {
                     .tm_min = minutes
                 };
                 char *s = s_widget_buffers[WidgetTypeActiveSeconds];
-                strftime(s, WIDGET_BUF_SIZEOF(s), "AS: %k:%M", &t);
+                strftime(s, WIDGET_BUF_SIZEOF(s), "AT: %k:%M", &t);
             }
         }
 

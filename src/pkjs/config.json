@@ -136,7 +136,7 @@
                                 "value": "9"
                             },
                             {
-                                "label": "Active Seconds (AS)",
+                                "label": "Active Time (AT)",
                                 "value": "10"
                             },
                             {
@@ -204,7 +204,7 @@
                                 "value": "9"
                             },
                             {
-                                "label": "Active Seconds (AS)",
+                                "label": "Active Time (AT)",
                                 "value": "10"
                             },
                             {
@@ -272,7 +272,7 @@
                                 "value": "9"
                             },
                             {
-                                "label": "Active Seconds (AS)",
+                                "label": "Active Time (AT)",
                                 "value": "10"
                             },
                             {
@@ -340,7 +340,7 @@
                                 "value": "9"
                             },
                             {
-                                "label": "Active Seconds (AS)",
+                                "label": "Active Time (AT)",
                                 "value": "10"
                             },
                             {
