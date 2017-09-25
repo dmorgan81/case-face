@@ -59,8 +59,53 @@
         },
         {
           "type": "raw",
-          "name": "WEATHER_ICONS_FFONT",
-          "file": "weather_iconsregular.ffont"
+          "name": "WEATHER_CLEAR_DAY",
+          "file": "WEATHER_CLEAR_DAY.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_CLEAR_NIGHT",
+          "file": "WEATHER_CLEAR_NIGHT.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_PARTLY_CLOUDY_DAY",
+          "file": "WEATHER_PARTLY_CLOUDY_DAY.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_PARTLY_CLOUDY_NIGHT",
+          "file": "WEATHER_PARTLY_CLOUDY_NIGHT.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_CLOUDY",
+          "file": "WEATHER_CLOUDY.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_RAIN",
+          "file": "WEATHER_RAIN.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_THUNDER",
+          "file": "WEATHER_THUNDER.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_SNOW",
+          "file": "WEATHER_SNOW.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_MIST",
+          "file": "WEATHER_MIST.fpath"
+        },
+        {
+          "type": "raw",
+          "name": "WEATHER_NA",
+          "file": "WEATHER_NA.fpath"
         }
       ]
     }

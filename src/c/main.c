@@ -3,6 +3,7 @@
 #include <pebble-connection-vibes/connection-vibes.h>
 #include <pebble-hourly-vibes/hourly-vibes.h>
 #include <enamel.h>
+#include <pebble-fctx/fpath.h>
 #include "fctx-layer.h"
 #include "fctx-text-layer.h"
 #include "weather.h"
@@ -29,46 +30,50 @@ typedef enum {
 static Window *s_window;
 static FctxLayer *s_root_layer;
 static FctxLayer *s_grid_layer;
+static FctxLayer *s_weather_icon_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
-static FctxTextLayer *s_weather_icon_layer;
 static FctxTextLayer *s_temperature_layer;
 static FctxTextLayer *s_widget_nw_layer;
 static FctxTextLayer *s_widget_ne_layer;
 static FctxTextLayer *s_widget_sw_layer;
 static FctxTextLayer *s_widget_se_layer;
 
-static GPoint s_weather_icon_origin;
-static FctxTextLayer* s_text_layers[8];
+static FctxTextLayer* s_text_layers[7];
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
 typedef struct {
-    char *s;
-    GPoint p;
+    uint32_t resource_id;
+    uint8_t scale_factor;
+    GPoint advance;
 } WeatherIcon;
 
-static const WeatherIcon s_weather_icon_na = { "I", { 0, -2 }};
+static WeatherIcon s_weather_icon;
+
+static const WeatherIcon s_weather_icon_na = { RESOURCE_ID_WEATHER_NA, 7, { 0, -9 }};
 
 static const WeatherIcon const s_weather_icons_day[] = {
-    { "A", { -2, -2 }},
-    { "B", { 0, 4 }},
-    { "C", { 0, -2 }},
-    { "D", { 0, -6 }},
-    { "E", { 0, -6 }},
-    { "F", { 0, -6 }},
-    { "G", { 0, -6 }},
-    { "H", { 0, -6 }},
+    { RESOURCE_ID_WEATHER_CLEAR_DAY, 10, { 10, 0 }},
+    { RESOURCE_ID_WEATHER_PARTLY_CLOUDY_DAY, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
+    { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
+    { RESOURCE_ID_WEATHER_RAIN, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_RAIN, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_THUNDER, 12, { 14, 6 }},
+    { RESOURCE_ID_WEATHER_SNOW, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_MIST, 8, { 4, -4 }},
 };
 
 static const WeatherIcon const s_weather_icons_night[] = {
-    { "a", { -2, -2 }},
-    { "b", { 0, 0 }},
-    { "C", { 0, -2 }},
-    { "D", { 0, -6 }},
-    { "E", { 0, -6 }},
-    { "F", { 0, -6 }},
-    { "G", { 0, -6 }},
-    { "H", { 0, -6 }},
+    { RESOURCE_ID_WEATHER_CLEAR_NIGHT, 6, { -8, -17 }},
+    { RESOURCE_ID_WEATHER_PARTLY_CLOUDY_NIGHT, 12, { 14, 2 }},
+    { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
+    { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
+    { RESOURCE_ID_WEATHER_RAIN, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_RAIN, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_THUNDER, 12, { 14, 6 }},
+    { RESOURCE_ID_WEATHER_SNOW, 12, { 14, 4 }},
+    { RESOURCE_ID_WEATHER_MIST, 8, { 4, -4 }},
 };
 
 static EventHandle s_tick_timer_event_handle;
@@ -112,6 +117,24 @@ static void prv_grid_layer_update_proc(FctxLayer *this, FContext *fctx) {
     prv_fctx_draw_rect(fctx, line_rect);
 }
 
+static void prv_weather_icon_layer_update_proc(FctxLayer *this, FContext *fctx) {
+    logf();
+    FPath *path = fpath_create_from_resource(s_weather_icon.resource_id);
+    uint8_t scale_factor = s_weather_icon.scale_factor;
+    GPoint advance = s_weather_icon.advance;
+    advance.x *= scale_factor;
+    advance.y *= scale_factor;
+
+    fctx_set_scale(fctx, FPoint(scale_factor, scale_factor), FPointOne);
+
+    fctx_begin_fill(fctx);
+    fctx_set_fill_color(fctx, GColorWhite);
+    fctx_draw_commands(fctx, FPointI(advance.x, advance.y), path->data, path->size);
+    fctx_end_fill(fctx);
+
+    fpath_destroy(path);
+}
+
 static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     logf();
     static char buf_time[8];
@@ -128,17 +151,10 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus status, void *context) {
     logf();
-    WeatherIcon weather_icon;
     if (info->condition == GenericWeatherConditionUnknown)
-        weather_icon = s_weather_icon_na;
+        s_weather_icon = s_weather_icon_na;
     else
-        weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
-    fctx_text_layer_set_text(s_weather_icon_layer, weather_icon.s);
-
-    GPoint origin = gpoint_add(s_weather_icon_origin, weather_icon.p);
-    GRect frame = fctx_layer_get_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
-    frame.origin = origin;
-    fctx_layer_set_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer), frame);
+        s_weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
 
     static char buf_temperature[8];
     int unit = atoi(enamel_get_WEATHER_UNIT());
@@ -329,15 +345,9 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_date_layer, 18);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_date_layer));
 
-    s_weather_icon_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 4, 74 + 25, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
-    fctx_text_layer_set_font(s_weather_icon_layer, RESOURCE_ID_WEATHER_ICONS_FFONT);
-    fctx_text_layer_set_alignment(s_weather_icon_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_weather_icon_layer, FTextAnchorMiddle);
-    fctx_text_layer_set_color(s_weather_icon_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_weather_icon_layer, 36);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
-    GRect frame = fctx_layer_get_frame(fctx_text_layer_get_fctx_layer(s_weather_icon_layer));
-    s_weather_icon_origin= frame.origin;
+    s_weather_icon_layer = fctx_layer_create(GRect(0, 74, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+    fctx_layer_set_update_proc(s_weather_icon_layer, prv_weather_icon_layer_update_proc);
+    fctx_layer_add_child(s_root_layer, s_weather_icon_layer);
 
     s_temperature_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_TEXT_FFONT);
@@ -385,12 +395,11 @@ static void prv_window_load(Window *window) {
 
     s_text_layers[0] = s_time_layer;
     s_text_layers[1] = s_date_layer;
-    s_text_layers[2] = s_weather_icon_layer;
-    s_text_layers[3] = s_temperature_layer;
-    s_text_layers[4] = s_widget_nw_layer;
-    s_text_layers[5] = s_widget_ne_layer;
-    s_text_layers[6] = s_widget_sw_layer;
-    s_text_layers[7] = s_widget_se_layer;
+    s_text_layers[2] = s_temperature_layer;
+    s_text_layers[3] = s_widget_nw_layer;
+    s_text_layers[4] = s_widget_ne_layer;
+    s_text_layers[5] = s_widget_sw_layer;
+    s_text_layers[6] = s_widget_se_layer;
 
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
@@ -412,6 +421,7 @@ static void prv_window_unload(Window *window) {
 
     for(uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) fctx_text_layer_destroy(s_text_layers[i]);
 
+    fctx_layer_destroy(s_weather_icon_layer);
     fctx_layer_destroy(s_grid_layer);
     fctx_layer_destroy(s_root_layer);
 }
