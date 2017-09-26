@@ -65,7 +65,7 @@ static const WeatherIcon const s_weather_icons_day[] = {
 };
 
 static const WeatherIcon const s_weather_icons_night[] = {
-    { RESOURCE_ID_WEATHER_CLEAR_NIGHT, 6, { -8, -17 }},
+    { RESOURCE_ID_WEATHER_CLEAR_NIGHT, 7, { -4, -11 }},
     { RESOURCE_ID_WEATHER_PARTLY_CLOUDY_NIGHT, 12, { 14, 2 }},
     { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
     { RESOURCE_ID_WEATHER_CLOUDY, 10, { 10, 0 }},
