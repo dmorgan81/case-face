@@ -131,7 +131,7 @@ static void prv_weather_icon_layer_update_proc(FctxLayer *this, FContext *fctx) 
     fctx_set_scale(fctx, FPoint(scale_factor, scale_factor), FPointOne);
 
     fctx_begin_fill(fctx);
-    fctx_set_fill_color(fctx, GColorWhite);
+    fctx_set_fill_color(fctx, enamel_get_COLOR_TEXT());
     fctx_draw_commands(fctx, FPointI(advance.x, advance.y), path->data, path->size);
     fctx_end_fill(fctx);
 
