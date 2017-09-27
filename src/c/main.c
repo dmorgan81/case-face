@@ -25,6 +25,8 @@ typedef enum {
     WidgetTypeDistance,
     WidgetTypeActiveSeconds,
     WidgetTypeSeconds,
+    WidgetTypeSunrise,
+    WidgetTypeSunset,
     WidgetTypeEnd
 } WidgetType;
 
@@ -187,6 +189,14 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     char *buf_temp_high = s_widget_buffers[WidgetTypeHighTemperature];
     snprintf(buf_temp_high, WIDGET_BUF_SIZEOF(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
 
+    struct tm *tick_time = localtime(&info->timesunrise);
+    char *buf_sunrise = s_widget_buffers[WidgetTypeSunrise];
+    strftime(buf_sunrise, WIDGET_BUF_SIZEOF(buf_sunrise), clock_is_24h_style() ? "SR: %H:%M" : "SR: %I:%M", tick_time);
+
+    tick_time = localtime(&info->timesunset);
+    char *buf_sunset = s_widget_buffers[WidgetTypeSunset];
+    strftime(buf_sunset, WIDGET_BUF_SIZEOF(buf_sunset), clock_is_24h_style() ? "SS: %H:%M" : "SS: %I:%M", tick_time);
+
 #ifdef DEMO
     fctx_text_layer_set_text(s_temperature_layer, "19°");
     snprintf(buf_humidity, WIDGET_BUF_SIZEOF(buf_humidity), "HU: 80%%");
@@ -245,7 +255,7 @@ static void prv_health_handler(HealthEventType event, void *context) {
                     .tm_min = minutes
                 };
                 char *s = s_widget_buffers[WidgetTypeActiveSeconds];
-                strftime(s, WIDGET_BUF_SIZEOF(s), "AT: %k:%M", &t);
+                strftime(s, WIDGET_BUF_SIZEOF(s), "AT:%k:%M", &t);
             }
         }
 

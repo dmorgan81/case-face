@@ -91,7 +91,7 @@
                         "value": "0"
                     },
                     {
-                        "label": "Status",
+                        "label": "General",
                         "value": [
                             {
                                 "label": "Battery (BT)",
@@ -104,6 +104,14 @@
                             {
                                 "label": "Seconds (SE)",
                                 "value": "11"
+                            },
+                            {
+                                "label": "Sunrise (SR)",
+                                "value": "12"
+                            },
+                            {
+                                "label": "Sunset (SS)",
+                                "value": "13"
                             }
                         ]
                     },
@@ -163,7 +171,7 @@
                         "value": "0"
                     },
                     {
-                        "label": "Status",
+                        "label": "General",
                         "value": [
                             {
                                 "label": "Battery (BT)",
@@ -176,6 +184,14 @@
                             {
                                 "label": "Seconds (SE)",
                                 "value": "11"
+                            },
+                            {
+                                "label": "Sunrise (SR)",
+                                "value": "12"
+                            },
+                            {
+                                "label": "Sunset (SS)",
+                                "value": "13"
                             }
                         ]
                     },
@@ -235,7 +251,7 @@
                         "value": "0"
                     },
                     {
-                        "label": "Status",
+                        "label": "General",
                         "value": [
                             {
                                 "label": "Battery (BT)",
@@ -248,6 +264,14 @@
                             {
                                 "label": "Seconds (SE)",
                                 "value": "11"
+                            },
+                            {
+                                "label": "Sunrise (SR)",
+                                "value": "12"
+                            },
+                            {
+                                "label": "Sunset (SS)",
+                                "value": "13"
                             }
                         ]
                     },
@@ -307,7 +331,7 @@
                         "value": "0"
                     },
                     {
-                        "label": "Status",
+                        "label": "General",
                         "value": [
                             {
                                 "label": "Battery (BT)",
@@ -320,6 +344,14 @@
                             {
                                 "label": "Seconds (SE)",
                                 "value": "11"
+                            },
+                            {
+                                "label": "Sunrise (SR)",
+                                "value": "12"
+                            },
+                            {
+                                "label": "Sunset (SS)",
+                                "value": "13"
                             }
                         ]
                     },
