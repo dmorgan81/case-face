@@ -143,6 +143,10 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     if (enamel_get_LEADING_ZERO()) fctx_text_layer_set_text(s_time_layer, buf_time);
     else fctx_text_layer_set_text(s_time_layer, buf_time + ((buf_time[0] == '0') ? 1 : 0));
 
+#ifdef DEMO
+    fctx_text_layer_set_text(s_time_layer, "12:34");
+#endif
+
     if (units_changed & SECOND_UNIT) {
         char *s = s_widget_buffers[WidgetTypeSeconds];
         strftime(s, WIDGET_BUF_SIZEOF(s), "SE: %S", tick_time);
@@ -162,6 +166,10 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
     else
         s_weather_icon = info->day ? s_weather_icons_day[info->condition] : s_weather_icons_night[info->condition];
 
+#ifdef DEMO
+    s_weather_icon = s_weather_icons_day[0];
+#endif
+
     static char buf_temperature[8];
     int unit = atoi(enamel_get_WEATHER_UNIT());
     snprintf(buf_temperature, sizeof(buf_temperature), "%d°", unit == 1 ? info->temp_f : info->temp_c);
@@ -178,6 +186,14 @@ static void prv_weather_handler(GenericWeatherInfo *info, GenericWeatherStatus s
 
     char *buf_temp_high = s_widget_buffers[WidgetTypeHighTemperature];
     snprintf(buf_temp_high, WIDGET_BUF_SIZEOF(buf_temp_high), "HI: %d°", unit == 1 ? info->temp_high_f: info->temp_high_c);
+
+#ifdef DEMO
+    fctx_text_layer_set_text(s_temperature_layer, "19°");
+    snprintf(buf_humidity, WIDGET_BUF_SIZEOF(buf_humidity), "HU: 80%%");
+    snprintf(buf_feels_like, WIDGET_BUF_SIZEOF(buf_feels_like), "FL: 20°");
+    snprintf(buf_temp_low, WIDGET_BUF_SIZEOF(buf_temp_low), "LO: 15°");
+    snprintf(buf_temp_high, WIDGET_BUF_SIZEOF(buf_temp_high), "HI: 20°");
+#endif
 }
 
 static void prv_battery_state_handler(BatteryChargeState charge_state) {
