@@ -1,3 +1,4 @@
+#ifndef PBL_PLATFORM_APLITE
 #include <pebble-fctx/fctx.h>
 #include <pebble-fctx/ffont.h>
 #include "fctx-layer.h"
@@ -107,3 +108,4 @@ void fctx_text_layer_set_anchor(FctxTextLayer *this, FTextAnchor anchor) {
     this->anchor = anchor;
     fctx_layer_mark_dirty(this->layer);
 }
+#endif

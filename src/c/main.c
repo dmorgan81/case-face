@@ -9,6 +9,13 @@
 #include "weather.h"
 #include "logging.h"
 
+#ifdef PBL_PLATFORM_APLITE
+#define RESOURCE_ID_TEXT_FFONT 0
+#define PBL_IF_APLITE_ELSE(A, B) (A)
+#else
+#define PBL_IF_APLITE_ELSE(A, B) (B)
+#endif
+
 #define WIDGET_BUF_LEN 16
 #define WIDGET_BUF_SIZEOF(b) sizeof(b) * WIDGET_BUF_LEN
 
@@ -365,7 +372,7 @@ static void prv_window_load(Window *window) {
     fctx_layer_set_update_proc(s_grid_layer, prv_grid_layer_update_proc);
     fctx_layer_add_child(s_root_layer, s_grid_layer);
 
-    s_time_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 2, 0, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+    s_time_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 2), PBL_IF_APLITE_ELSE(-8, 0), PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     fctx_text_layer_set_font(s_time_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_time_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_time_layer, FTextAnchorTop);
@@ -373,7 +380,7 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_time_layer, 56);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_time_layer));
 
-    s_date_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 2, 70, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+    s_date_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 2), PBL_IF_APLITE_ELSE(42, 70), PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     fctx_text_layer_set_font(s_date_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_date_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_date_layer, FTextAnchorBottom);
@@ -385,7 +392,11 @@ static void prv_window_load(Window *window) {
     fctx_layer_set_update_proc(s_weather_icon_layer, prv_weather_icon_layer_update_proc);
     fctx_layer_add_child(s_root_layer, s_weather_icon_layer);
 
+#ifdef PBL_PLATFORM_APLITE
+    s_temperature_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 2, 80, PBL_DISPLAY_WIDTH / 2, PBL_DISPLAY_HEIGHT));
+#else
     s_temperature_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 25, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+#endif
     fctx_text_layer_set_font(s_temperature_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_temperature_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_temperature_layer, FTextAnchorMiddle);
@@ -395,7 +406,7 @@ static void prv_window_load(Window *window) {
 
     uint8_t widget_width = PBL_DISPLAY_WIDTH / 2 - 1;
 
-    s_widget_nw_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 3, widget_width, 20));
+    s_widget_nw_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4), 74 + 52 + PBL_IF_APLITE_ELSE(-2, 3), widget_width, 20));
     fctx_text_layer_set_font(s_widget_nw_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_widget_nw_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_widget_nw_layer, FTextAnchorTop);
@@ -403,7 +414,7 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_widget_nw_layer, 16);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_nw_layer));
 
-    s_widget_ne_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 3, widget_width, 20));
+    s_widget_ne_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4)), 74 + 52 + PBL_IF_APLITE_ELSE(-2, 3), widget_width, 20));
     fctx_text_layer_set_font(s_widget_ne_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_widget_ne_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_widget_ne_layer, FTextAnchorTop);
@@ -411,7 +422,7 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_widget_ne_layer, 16);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_ne_layer));
 
-    s_widget_sw_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH / 4, 74 + 52 + 22 + 4, widget_width, 20));
+    s_widget_sw_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + PBL_IF_APLITE_ELSE(-2, 4), widget_width, 20));
     fctx_text_layer_set_font(s_widget_sw_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_widget_sw_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_widget_sw_layer, FTextAnchorTop);
@@ -419,7 +430,7 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_widget_sw_layer, 16);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_sw_layer));
 
-    s_widget_se_layer = fctx_text_layer_create(GRect(PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + 4, widget_width, 20));
+    s_widget_se_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4)), 74 + 52 + 22 + PBL_IF_APLITE_ELSE(-2, 4), widget_width, 20));
     fctx_text_layer_set_font(s_widget_se_layer, RESOURCE_ID_TEXT_FFONT);
     fctx_text_layer_set_alignment(s_widget_se_layer, GTextAlignmentCenter);
     fctx_text_layer_set_anchor(s_widget_se_layer, FTextAnchorTop);

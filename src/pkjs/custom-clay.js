@@ -5,12 +5,16 @@ module.exports = function(minified) {
     var HTML = minified.HTML;
 
     Clay.on(Clay.EVENTS.AFTER_BUILD, function() {
-        var gpsToggle = Clay.getItemByMessageKey('WEATHER_USE_GPS');
-        var locationInput = Clay.getItemByMessageKey('WEATHER_LOCATION_NAME');
-        gpsToggle.on('change', function() {
-            if (gpsToggle.get()) locationInput.hide();
-            else locationInput.show();
-        }).trigger('change');
+        var platform = Clay.meta.activeWatchInfo.platform || 'diorite';
+
+        if (platform != 'aplite') {
+            var gpsToggle = Clay.getItemByMessageKey('WEATHER_USE_GPS');
+            var locationInput = Clay.getItemByMessageKey('WEATHER_LOCATION_NAME');
+            gpsToggle.on('change', function() {
+                if (gpsToggle.get()) locationInput.hide();
+                else locationInput.show();
+            }).trigger('change');
+        }
 
         var widgets = Clay.getItemsByGroup('widget');
         widgets.forEach(function(widget) {
@@ -22,5 +26,15 @@ module.exports = function(minified) {
                     .forEach(function(w) { w.set('0'); });
             });
         });
+
+        if (platform == 'aplite') {
+            $('optgroup[label="Health"]').each(function(obj) {
+                obj['parentNode'].removeChild(obj);
+            });
+        } else if (platform == 'basalt') {
+            $('option[value="8"]').each(function(obj) {
+                obj['parentNode'].removeChild(obj);
+            })
+        }
     });
 }
