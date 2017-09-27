@@ -24,6 +24,7 @@ typedef enum {
     WidgetTypeHeartRate,
     WidgetTypeDistance,
     WidgetTypeActiveSeconds,
+    WidgetTypeSeconds,
     WidgetTypeEnd
 } WidgetType;
 
@@ -142,6 +143,11 @@ static void prv_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     if (enamel_get_LEADING_ZERO()) fctx_text_layer_set_text(s_time_layer, buf_time);
     else fctx_text_layer_set_text(s_time_layer, buf_time + ((buf_time[0] == '0') ? 1 : 0));
 
+    if (units_changed & SECOND_UNIT) {
+        char *s = s_widget_buffers[WidgetTypeSeconds];
+        strftime(s, WIDGET_BUF_SIZEOF(s), "SE: %S", tick_time);
+    }
+
     if (units_changed & DAY_UNIT) {
         static char buf_date[16];
         strftime(buf_date, sizeof(buf_date), "%a, %b %d", tick_time);
@@ -255,9 +261,6 @@ static void prv_connection_handler(bool connected) {
 
 static void prv_settings_handler(void *context) {
     logf();
-    time_t now = time(NULL);
-    prv_tick_handler(localtime(&now), DAY_UNIT | MONTH_UNIT);
-
     prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
 
     connection_vibes_set_state(atoi(enamel_get_CONNECTION_VIBE()));
@@ -271,6 +274,13 @@ static void prv_settings_handler(void *context) {
     WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
     WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
     WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
+
+    bool needs_seconds = widget_nw == WidgetTypeSeconds || widget_ne == WidgetTypeSeconds
+                                     || widget_sw == WidgetTypeSeconds || widget_se == WidgetTypeSeconds;
+    if (s_tick_timer_event_handle) events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
+    time_t now = time(NULL);
+    prv_tick_handler(localtime(&now), DAY_UNIT | SECOND_UNIT);
+    s_tick_timer_event_handle = events_tick_timer_service_subscribe(needs_seconds ? SECOND_UNIT : MINUTE_UNIT, prv_tick_handler);
 
     bool needs_battery = widget_nw == WidgetTypeBattery || widget_ne == WidgetTypeBattery
                                     || widget_sw == WidgetTypeBattery || widget_se == WidgetTypeBattery;
@@ -401,7 +411,6 @@ static void prv_window_load(Window *window) {
     s_text_layers[5] = s_widget_sw_layer;
     s_text_layers[6] = s_widget_se_layer;
 
-    s_tick_timer_event_handle = events_tick_timer_service_subscribe(MINUTE_UNIT, prv_tick_handler);
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
 
     prv_settings_handler(NULL);
