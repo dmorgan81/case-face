@@ -421,6 +421,10 @@
                         "value": "120"
                     }
                 ]
+            },
+            {
+                "type": "text",
+                "defaultValue": "Powered by<br/><a target=\"_blank\" href=\"https://www.wunderground.com\"><img alt=\"Weather Underground\" style=\"width:100%;\" src=\"https://icons.wxug.com/logos/PNG/wundergroundLogo_4c_rev.png\"></img></a>"
             }
         ]
     },
