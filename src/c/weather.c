@@ -40,6 +40,36 @@ static const uint32_t PERSIST_KEY_WEATHER_STATUS = 3;
 #define _WEATHER_API_KEY_5 WEATHER_API_KEY_5
 #endif
 
+#ifndef WEATHER_API_KEY_6
+#define _WEATHER_API_KEY_6 NULL
+#else
+#define _WEATHER_API_KEY_6 WEATHER_API_KEY_6
+#endif
+
+#ifndef WEATHER_API_KEY_7
+#define _WEATHER_API_KEY_7 NULL
+#else
+#define _WEATHER_API_KEY_7 WEATHER_API_KEY_7
+#endif
+
+#ifndef WEATHER_API_KEY_8
+#define _WEATHER_API_KEY_8 NULL
+#else
+#define _WEATHER_API_KEY_8 WEATHER_API_KEY_8
+#endif
+
+#ifndef WEATHER_API_KEY_9
+#define _WEATHER_API_KEY_9 NULL
+#else
+#define _WEATHER_API_KEY_9 WEATHER_API_KEY_9
+#endif
+
+#ifndef WEATHER_API_KEY_10
+#define _WEATHER_API_KEY_10 NULL
+#else
+#define _WEATHER_API_KEY_10 WEATHER_API_KEY_10
+#endif
+
 typedef struct {
     EventWeatherHandler handler;
     void *context;
@@ -71,6 +101,11 @@ static const char* const s_weather_api_keys[] = {
     _WEATHER_API_KEY_3,
     _WEATHER_API_KEY_4,
     _WEATHER_API_KEY_5,
+    _WEATHER_API_KEY_6,
+    _WEATHER_API_KEY_7,
+    _WEATHER_API_KEY_8,
+    _WEATHER_API_KEY_9,
+    _WEATHER_API_KEY_10
 };
 
 #ifndef PBL_PLATFORM_APLITE
