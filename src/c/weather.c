@@ -169,6 +169,7 @@ static void geocode_handler(GeocodeMapquestCoordinates *coordinates, GeocodeMapq
 static void settings_handler(void *context) {
     logf();
     uint32_t interval = atoi(enamel_get_WEATHER_INTERVAL()) * SECONDS_PER_MINUTE;
+    interval = interval < (30 * SECONDS_PER_MINUTE) ? (30 * SECONDS_PER_MINUTE) : interval;
 #ifndef PBL_PLATFORM_APLITE
     bool use_gps = enamel_get_WEATHER_USE_GPS();
     const char *location_name = enamel_get_WEATHER_LOCATION_NAME();
@@ -225,6 +226,7 @@ void weather_init(void) {
     s_handler_list = linked_list_create_root();
 
     s_interval = atoi(enamel_get_WEATHER_INTERVAL()) * SECONDS_PER_MINUTE;
+    s_interval = s_interval < (30 * SECONDS_PER_MINUTE) ? (30 * SECONDS_PER_MINUTE) : s_interval;
 #ifndef PBL_PLATFORM_APLITE
     s_use_gps = enamel_get_WEATHER_USE_GPS();
 #endif

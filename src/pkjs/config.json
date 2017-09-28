@@ -449,10 +449,6 @@
                 "defaultValue": "60",
                 "options": [
                     {
-                        "label": "15 Minutes",
-                        "value": "15"
-                    },
-                    {
                         "label": "30 Minutes",
                         "value": "30"
                     },
