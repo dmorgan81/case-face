@@ -108,6 +108,9 @@ static const char* const s_weather_api_keys[] = {
     _WEATHER_API_KEY_10
 };
 
+static uint8_t s_weather_api_keys_len;
+static uint8_t s_weather_api_key_idx;
+
 #ifndef PBL_PLATFORM_APLITE
 static bool s_use_gps;
 static EventHandle s_geocode_event_handle;
@@ -141,12 +144,9 @@ static void generic_weather_fetch_callback(GenericWeatherInfo *info, GenericWeat
 
 static void do_fetch_weather(void) {
     logf();
-    uint len = 0;
-    for (uint i = 0; i < ARRAY_LENGTH(s_weather_api_keys); i++) {
-        if (s_weather_api_keys[i]) len++;
-    }
 
-    const char *key = s_weather_api_keys[rand() / (RAND_MAX / len + 1)];
+    const char *key = s_weather_api_keys[s_weather_api_key_idx++];
+    if (s_weather_api_key_idx > s_weather_api_keys_len - 1) s_weather_api_key_idx = 0;
     logd("weather api key: %s", key);
     generic_weather_set_api_key(key);
 
@@ -255,6 +255,11 @@ void weather_init(void) {
         logd("%s", s_weather_api_keys[i]);
     }
 #endif
+
+    for (uint i = 0; i < ARRAY_LENGTH(s_weather_api_keys); i++) {
+        if (s_weather_api_keys[i]) s_weather_api_keys_len++;
+    }
+    s_weather_api_key_idx = rand() / (RAND_MAX / s_weather_api_keys_len + 1);
 
     s_status = persist_exists(PERSIST_KEY_WEATHER_STATUS) ? persist_read_int(PERSIST_KEY_WEATHER_STATUS) : GenericWeatherStatusNotYetFetched;
 
