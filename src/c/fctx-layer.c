@@ -21,6 +21,11 @@ static bool prv_layer_children_foreach(void *obj, void *fctx) {
         fctx_set_rotation(fctx, 0);
 
         GRect frame = fctx_layer_get_frame(this);
+        if (this->parent != NULL) {
+            GRect parent = fctx_layer_get_frame(this->parent);
+            frame.origin.x += parent.origin.x;
+            frame.origin.y += parent.origin.y;
+        }
         fctx_set_offset(fctx, g2fpoint(frame.origin));
 
         this->update_proc(this, fctx);

@@ -41,6 +41,7 @@ static Window *s_window;
 static FctxLayer *s_root_layer;
 static FctxLayer *s_grid_layer;
 static FctxLayer *s_weather_icon_layer;
+static FctxLayer *s_widget_container_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_temperature_layer;
@@ -99,6 +100,9 @@ static EventHandle s_battery_state_event_handle;
 static EventHandle s_health_event_handle;
 #endif
 static EventHandle s_connection_event_handle;
+static EventHandle s_tap_event_handle;
+
+static bool s_tap_animated;
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -117,18 +121,29 @@ static void prv_grid_layer_update_proc(FctxLayer *this, FContext *fctx) {
 
     GRect line_rect = GRect(0, 0, 1, 1);
     fctx_set_scale(fctx, FPointOne, FPointI(PBL_DISPLAY_WIDTH, 2));
-
     fctx_set_offset(fctx, FPointI(0, 72));
     prv_fctx_draw_rect(fctx, line_rect);
+}
 
-    fctx_set_offset(fctx, FPointI(0, 72 + 50 + 2));
+static void prv_widget_container_layer_update_proc(FctxLayer *this, FContext *fctx) {
+    logf();
+    GRect frame = fctx_layer_get_frame(this);
+    GRect line_rect = GRect(0, 0, 1, 1);
+
+    fctx_set_scale(fctx, FPointOne, FPointI(frame.size.w, frame.size.h));
+    fctx_set_fill_color(fctx, enamel_get_COLOR_BACKGROUND());
     prv_fctx_draw_rect(fctx, line_rect);
 
-    fctx_set_offset(fctx, FPointI(0, 72 + 50 + 20 + 4));
-    prv_fctx_draw_rect(fctx, line_rect);
+    fctx_set_fill_color(fctx, enamel_get_COLOR_PINLINE());
+    fctx_set_scale(fctx, FPointOne, FPointI(PBL_DISPLAY_WIDTH, 2));
 
-    fctx_set_scale(fctx, FPointOne, FPointI(2, 42));
-    fctx_set_offset(fctx, FPointI(PBL_DISPLAY_WIDTH / 2 - 1, PBL_DISPLAY_HEIGHT - 42));
+    for (int i = 0; i < 4; i++) {
+        fctx_set_offset(fctx, FPointI(0, frame.origin.y + (22 * i)));
+        prv_fctx_draw_rect(fctx, line_rect);
+    }
+
+    fctx_set_scale(fctx, FPointOne, FPointI(2, PBL_DISPLAY_HEIGHT));
+    fctx_set_offset(fctx, FPointI(PBL_DISPLAY_WIDTH / 2 - 1, frame.origin.y));
     prv_fctx_draw_rect(fctx, line_rect);
 }
 
@@ -297,6 +312,31 @@ static void prv_connection_handler(bool connected) {
     fctx_layer_mark_dirty(s_root_layer);
 }
 
+static void prv_tap_animation_stopped(Animation *animation, bool finished, void *context) {
+    logf();
+    s_tap_animated = false;
+}
+
+static void prv_tap_handler(AccelAxisType axis, int32_t direction) {
+    logf();
+    if (s_tap_animated) return;
+    s_tap_animated = true;
+
+    GRect from = fctx_layer_get_frame(s_widget_container_layer);
+    GRect to = GRect(from.origin.x, from.origin.y - 44, from.size.w, from.size.h);
+    PropertyAnimation *animation = property_animation_create_layer_frame(fctx_layer_get_layer(s_widget_container_layer), &from, &to);
+
+    Animation *clone = animation_clone(property_animation_get_animation(animation));
+    animation_set_handlers(clone, (AnimationHandlers) {
+        .stopped = prv_tap_animation_stopped
+    }, NULL);
+    animation_set_reverse(clone, true);
+    animation_set_delay(clone, 5000);
+
+    Animation *sequence = animation_sequence_create(property_animation_get_animation(animation), clone, NULL);
+    s_tap_animated = animation_schedule(sequence);
+}
+
 static bool prv_has_widget_type(WidgetType type) {
     WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
     WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
@@ -412,9 +452,13 @@ static void prv_window_load(Window *window) {
     fctx_text_layer_set_text_size(s_temperature_layer, 36);
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temperature_layer));
 
+    s_widget_container_layer = fctx_layer_create(GRect(0, 72 + 52, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+    fctx_layer_set_update_proc(s_widget_container_layer, prv_widget_container_layer_update_proc);
+    fctx_layer_add_child(s_root_layer, s_widget_container_layer);
+
     uint8_t widget_width = PBL_DISPLAY_WIDTH / 2 - 1;
     for (uint i = 0; i < ARRAY_LENGTH(s_widget_layers); i++) {
-        uint8_t y = 74 + 52 + (22 * (i / 2)) + PBL_IF_APLITE_ELSE(-2, 3);
+        uint8_t y = (22 * (i / 2)) + PBL_IF_APLITE_ELSE(0, 5);
         uint8_t x;
         if (i % 2 == 0) x = PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4);
         else x = PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4));
@@ -424,12 +468,13 @@ static void prv_window_load(Window *window) {
         fctx_text_layer_set_anchor(s_widget_layers[i], FTextAnchorTop);
         fctx_text_layer_set_color(s_widget_layers[i], GColorWhite);
         fctx_text_layer_set_text_size(s_widget_layers[i], 16);
-        fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_layers[i]));
+        fctx_layer_add_child(s_widget_container_layer, fctx_text_layer_get_fctx_layer(s_widget_layers[i]));
     }
 
     memset(s_widget_buffers, 0, sizeof(s_widget_buffers));
 
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
+    s_tap_event_handle = events_accel_tap_service_subscribe(prv_tap_handler);
 
     prv_settings_handler(NULL);
     s_settings_event_handle = enamel_settings_received_subscribe(prv_settings_handler, NULL);
@@ -443,12 +488,14 @@ static void prv_window_unload(Window *window) {
 #endif
     if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
+    events_accel_tap_service_unsubscribe(s_tap_event_handle);
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
     for(uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) fctx_text_layer_destroy(*s_text_layers[i]);
 
     fctx_layer_destroy(s_weather_icon_layer);
+    fctx_layer_destroy(s_widget_container_layer);
     fctx_layer_destroy(s_grid_layer);
     fctx_layer_destroy(s_root_layer);
 }
