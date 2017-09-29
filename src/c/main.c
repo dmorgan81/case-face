@@ -300,6 +300,14 @@ static void prv_connection_handler(bool connected) {
     fctx_layer_mark_dirty(s_root_layer);
 }
 
+static bool prv_has_widget_type(WidgetType type) {
+    WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
+    WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
+    WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
+    WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
+    return widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
+}
+
 static void prv_settings_handler(void *context) {
     logf();
     prv_weather_handler(weather_peek(), weather_status_peek(), NULL);
@@ -311,20 +319,13 @@ static void prv_settings_handler(void *context) {
         fctx_text_layer_set_color(*s_text_layers[i], enamel_get_COLOR_TEXT());
     }
 
-    WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
-    WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
-    WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
-    WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
-
-    bool needs_seconds = widget_nw == WidgetTypeSeconds || widget_ne == WidgetTypeSeconds
-                                     || widget_sw == WidgetTypeSeconds || widget_se == WidgetTypeSeconds;
+    bool needs_seconds = prv_has_widget_type(WidgetTypeSeconds);
     if (s_tick_timer_event_handle) events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
     time_t now = time(NULL);
     prv_tick_handler(localtime(&now), DAY_UNIT | SECOND_UNIT);
     s_tick_timer_event_handle = events_tick_timer_service_subscribe(needs_seconds ? SECOND_UNIT : MINUTE_UNIT, prv_tick_handler);
 
-    bool needs_battery = widget_nw == WidgetTypeBattery || widget_ne == WidgetTypeBattery
-                                    || widget_sw == WidgetTypeBattery || widget_se == WidgetTypeBattery;
+    bool needs_battery = prv_has_widget_type(WidgetTypeBattery);
     if (needs_battery && !s_battery_state_event_handle) {
         prv_battery_state_handler(battery_state_service_peek());
         s_battery_state_event_handle = events_battery_state_service_subscribe(prv_battery_state_handler);
@@ -334,12 +335,9 @@ static void prv_settings_handler(void *context) {
     }
 
 #ifdef PBL_HEALTH
-    bool needs_health = widget_nw == WidgetTypeSteps || widget_ne == WidgetTypeSteps
-                                   || widget_sw == WidgetTypeSteps || widget_se == WidgetTypeSteps
-                                   || widget_nw == WidgetTypeDistance || widget_ne == WidgetTypeDistance
-                                   || widget_sw == WidgetTypeDistance || widget_se == WidgetTypeDistance
-                                   || widget_nw == WidgetTypeHeartRate || widget_ne == WidgetTypeHeartRate
-                                   || widget_sw == WidgetTypeHeartRate || widget_se == WidgetTypeHeartRate;
+    bool needs_health = prv_has_widget_type(WidgetTypeSteps) ||
+                        prv_has_widget_type(WidgetTypeDistance) ||
+                        prv_has_widget_type(WidgetTypeHeartRate);
     if (needs_health && !s_health_event_handle) {
         prv_health_handler(HealthEventSignificantUpdate, NULL);
         s_health_event_handle = events_health_service_events_subscribe(prv_health_handler, NULL);
@@ -352,8 +350,7 @@ static void prv_settings_handler(void *context) {
     hourly_vibes_enable_health(needs_health);
 #endif
 
-    bool needs_connection = widget_nw == WidgetTypeConnection || widget_ne == WidgetTypeConnection
-                                          || widget_sw == WidgetTypeConnection || widget_se == WidgetTypeConnection;
+    bool needs_connection = prv_has_widget_type(WidgetTypeConnection);
     if (needs_connection && !s_connection_event_handle) {
         prv_connection_handler(connection_service_peek_pebble_app_connection());
         s_connection_event_handle = events_connection_service_subscribe((ConnectionHandlers) {
@@ -363,6 +360,11 @@ static void prv_settings_handler(void *context) {
         events_connection_service_unsubscribe(s_connection_event_handle);
         s_connection_event_handle = NULL;
     }
+
+    WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
+    WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
+    WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
+    WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
 
     fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[widget_nw]);
     fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[widget_ne]);
