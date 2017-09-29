@@ -49,7 +49,15 @@ static FctxTextLayer *s_widget_ne_layer;
 static FctxTextLayer *s_widget_sw_layer;
 static FctxTextLayer *s_widget_se_layer;
 
-static FctxTextLayer* s_text_layers[7];
+static FctxTextLayer** s_text_layers[] = {
+    &s_time_layer,
+    &s_date_layer,
+    &s_temperature_layer,
+    &s_widget_nw_layer,
+    &s_widget_ne_layer,
+    &s_widget_sw_layer,
+    &s_widget_se_layer,
+};
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
 typedef struct {
@@ -300,7 +308,7 @@ static void prv_settings_handler(void *context) {
     hourly_vibes_set_enabled(enamel_get_HOURLY_VIBE());
 
     for (uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) {
-        fctx_text_layer_set_color(s_text_layers[i], enamel_get_COLOR_TEXT());
+        fctx_text_layer_set_color(*s_text_layers[i], enamel_get_COLOR_TEXT());
     }
 
     WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
@@ -440,14 +448,6 @@ static void prv_window_load(Window *window) {
 
     memset(s_widget_buffers, 0, sizeof(s_widget_buffers));
 
-    s_text_layers[0] = s_time_layer;
-    s_text_layers[1] = s_date_layer;
-    s_text_layers[2] = s_temperature_layer;
-    s_text_layers[3] = s_widget_nw_layer;
-    s_text_layers[4] = s_widget_ne_layer;
-    s_text_layers[5] = s_widget_sw_layer;
-    s_text_layers[6] = s_widget_se_layer;
-
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
 
     prv_settings_handler(NULL);
@@ -465,7 +465,7 @@ static void prv_window_unload(Window *window) {
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
-    for(uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) fctx_text_layer_destroy(s_text_layers[i]);
+    for(uint i = 0; i < ARRAY_LENGTH(s_text_layers); i++) fctx_text_layer_destroy(*s_text_layers[i]);
 
     fctx_layer_destroy(s_weather_icon_layer);
     fctx_layer_destroy(s_grid_layer);
