@@ -44,19 +44,16 @@ static FctxLayer *s_weather_icon_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_temperature_layer;
-static FctxTextLayer *s_widget_nw_layer;
-static FctxTextLayer *s_widget_ne_layer;
-static FctxTextLayer *s_widget_sw_layer;
-static FctxTextLayer *s_widget_se_layer;
+static FctxTextLayer *s_widget_layers[4];
 
 static FctxTextLayer** s_text_layers[] = {
     &s_time_layer,
     &s_date_layer,
     &s_temperature_layer,
-    &s_widget_nw_layer,
-    &s_widget_ne_layer,
-    &s_widget_sw_layer,
-    &s_widget_se_layer,
+    &s_widget_layers[0],
+    &s_widget_layers[1],
+    &s_widget_layers[2],
+    &s_widget_layers[3],
 };
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
@@ -361,15 +358,16 @@ static void prv_settings_handler(void *context) {
         s_connection_event_handle = NULL;
     }
 
-    WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
-    WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
-    WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
-    WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
+    WidgetType widget_types[] = {
+        atoi(enamel_get_WIDGET_NW()),
+        atoi(enamel_get_WIDGET_NE()),
+        atoi(enamel_get_WIDGET_SW()),
+        atoi(enamel_get_WIDGET_SE()),
+    };
 
-    fctx_text_layer_set_text(s_widget_nw_layer, s_widget_buffers[widget_nw]);
-    fctx_text_layer_set_text(s_widget_ne_layer, s_widget_buffers[widget_ne]);
-    fctx_text_layer_set_text(s_widget_sw_layer, s_widget_buffers[widget_sw]);
-    fctx_text_layer_set_text(s_widget_se_layer, s_widget_buffers[widget_se]);
+    for (uint i = 0; i < ARRAY_LENGTH(s_widget_layers); i++) {
+        fctx_text_layer_set_text(s_widget_layers[i], s_widget_buffers[widget_types[i]]);
+    }
 
     window_set_background_color(s_window, enamel_get_COLOR_BACKGROUND());
 }
@@ -415,38 +413,19 @@ static void prv_window_load(Window *window) {
     fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_temperature_layer));
 
     uint8_t widget_width = PBL_DISPLAY_WIDTH / 2 - 1;
-
-    s_widget_nw_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4), 74 + 52 + PBL_IF_APLITE_ELSE(-2, 3), widget_width, 20));
-    fctx_text_layer_set_font(s_widget_nw_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_widget_nw_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_widget_nw_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_widget_nw_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_widget_nw_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_nw_layer));
-
-    s_widget_ne_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4)), 74 + 52 + PBL_IF_APLITE_ELSE(-2, 3), widget_width, 20));
-    fctx_text_layer_set_font(s_widget_ne_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_widget_ne_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_widget_ne_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_widget_ne_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_widget_ne_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_ne_layer));
-
-    s_widget_sw_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4), 74 + 52 + 22 + PBL_IF_APLITE_ELSE(-2, 4), widget_width, 20));
-    fctx_text_layer_set_font(s_widget_sw_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_widget_sw_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_widget_sw_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_widget_sw_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_widget_sw_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_sw_layer));
-
-    s_widget_se_layer = fctx_text_layer_create(GRect(PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4)), 74 + 52 + 22 + PBL_IF_APLITE_ELSE(-2, 4), widget_width, 20));
-    fctx_text_layer_set_font(s_widget_se_layer, RESOURCE_ID_TEXT_FFONT);
-    fctx_text_layer_set_alignment(s_widget_se_layer, GTextAlignmentCenter);
-    fctx_text_layer_set_anchor(s_widget_se_layer, FTextAnchorTop);
-    fctx_text_layer_set_color(s_widget_se_layer, GColorWhite);
-    fctx_text_layer_set_text_size(s_widget_se_layer, 16);
-    fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_se_layer));
+    for (uint i = 0; i < ARRAY_LENGTH(s_widget_layers); i++) {
+        uint8_t y = 74 + 52 + (22 * (i / 2)) + PBL_IF_APLITE_ELSE(-2, 3);
+        uint8_t x;
+        if (i % 2 == 0) x = PBL_IF_APLITE_ELSE(0, PBL_DISPLAY_WIDTH / 4);
+        else x = PBL_IF_APLITE_ELSE(PBL_DISPLAY_WIDTH / 2 + 1, PBL_DISPLAY_WIDTH - (PBL_DISPLAY_WIDTH / 4));
+        s_widget_layers[i] = fctx_text_layer_create(GRect(x, y, widget_width, 20));
+        fctx_text_layer_set_font(s_widget_layers[i], RESOURCE_ID_TEXT_FFONT);
+        fctx_text_layer_set_alignment(s_widget_layers[i], GTextAlignmentCenter);
+        fctx_text_layer_set_anchor(s_widget_layers[i], FTextAnchorTop);
+        fctx_text_layer_set_color(s_widget_layers[i], GColorWhite);
+        fctx_text_layer_set_text_size(s_widget_layers[i], 16);
+        fctx_layer_add_child(s_root_layer, fctx_text_layer_get_fctx_layer(s_widget_layers[i]));
+    }
 
     memset(s_widget_buffers, 0, sizeof(s_widget_buffers));
 
