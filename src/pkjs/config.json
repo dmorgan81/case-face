@@ -87,7 +87,7 @@
                 "defaultValue": "1",
                 "options": [
                     {
-                        "label": "None",
+                        "label": "Nothing",
                         "value": "0"
                     },
                     {
@@ -123,15 +123,15 @@
                                 "value": "1"
                             },
                             {
-                                "label": "Feels Like Temperature (FL)",
+                                "label": "Feels Like Temp (FL)",
                                 "value": "2"
                             },
                             {
-                                "label": "Low Temperature (LO)",
+                                "label": "Low Temp (LO)",
                                 "value": "3"
                             },
                             {
-                                "label": "High Temperature (HI)",
+                                "label": "High Temp (HI)",
                                 "value": "4"
                             }
                         ]
@@ -165,79 +165,7 @@
                 "messageKey": "WIDGET_NE",
                 "label": "North East",
                 "defaultValue": "2",
-                "options": [
-                    {
-                        "label": "None",
-                        "value": "0"
-                    },
-                    {
-                        "label": "General",
-                        "value": [
-                            {
-                                "label": "Battery (BT)",
-                                "value": "5"
-                            },
-                            {
-                                "label": "Connection (CN)",
-                                "value": "7"
-                            },
-                            {
-                                "label": "Seconds (SE)",
-                                "value": "11"
-                            },
-                            {
-                                "label": "Sunrise (SR)",
-                                "value": "12"
-                            },
-                            {
-                                "label": "Sunset (SS)",
-                                "value": "13"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Weather",
-                        "value": [
-                            {
-                                "label": "Humidity (HU)",
-                                "value": "1"
-                            },
-                            {
-                                "label": "Feels Like Temperature (FL)",
-                                "value": "2"
-                            },
-                            {
-                                "label": "Low Temperature (LO)",
-                                "value": "3"
-                            },
-                            {
-                                "label": "High Temperature (HI)",
-                                "value": "4"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Health",
-                        "value": [
-                            {
-                                "label": "Steps (ST)",
-                                "value": "6"
-                            },
-                            {
-                                "label": "Distance (DI)",
-                                "value": "9"
-                            },
-                            {
-                                "label": "Active Time (AT)",
-                                "value": "10"
-                            },
-                            {
-                                "label": "Heart Rate (HR)",
-                                "value": "8"
-                            }
-                        ]
-                    }
-                ],
+                "options": [{ "label" : "Nothing", "value": "0" }],
                 "group": "widget"
             },
             {
@@ -245,79 +173,7 @@
                 "messageKey": "WIDGET_SW",
                 "label": "South West",
                 "defaultValue": "3",
-                "options": [
-                    {
-                        "label": "None",
-                        "value": "0"
-                    },
-                    {
-                        "label": "General",
-                        "value": [
-                            {
-                                "label": "Battery (BT)",
-                                "value": "5"
-                            },
-                            {
-                                "label": "Connection (CN)",
-                                "value": "7"
-                            },
-                            {
-                                "label": "Seconds (SE)",
-                                "value": "11"
-                            },
-                            {
-                                "label": "Sunrise (SR)",
-                                "value": "12"
-                            },
-                            {
-                                "label": "Sunset (SS)",
-                                "value": "13"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Weather",
-                        "value": [
-                            {
-                                "label": "Humidity (HU)",
-                                "value": "1"
-                            },
-                            {
-                                "label": "Feels Like Temperature (FL)",
-                                "value": "2"
-                            },
-                            {
-                                "label": "Low Temperature (LO)",
-                                "value": "3"
-                            },
-                            {
-                                "label": "High Temperature (HI)",
-                                "value": "4"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Health",
-                        "value": [
-                            {
-                                "label": "Steps (ST)",
-                                "value": "6"
-                            },
-                            {
-                                "label": "Distance (DI)",
-                                "value": "9"
-                            },
-                            {
-                                "label": "Active Time (AT)",
-                                "value": "10"
-                            },
-                            {
-                                "label": "Heart Rate (HR)",
-                                "value": "8"
-                            }
-                        ]
-                    }
-                ],
+                "options": [{ "label" : "Nothing", "value": "0" }],
                 "group": "widget"
             },
             {
@@ -325,79 +181,52 @@
                 "messageKey": "WIDGET_SE",
                 "label": "South East",
                 "defaultValue": "4",
-                "options": [
-                    {
-                        "label": "None",
-                        "value": "0"
-                    },
-                    {
-                        "label": "General",
-                        "value": [
-                            {
-                                "label": "Battery (BT)",
-                                "value": "5"
-                            },
-                            {
-                                "label": "Connection (CN)",
-                                "value": "7"
-                            },
-                            {
-                                "label": "Seconds (SE)",
-                                "value": "11"
-                            },
-                            {
-                                "label": "Sunrise (SR)",
-                                "value": "12"
-                            },
-                            {
-                                "label": "Sunset (SS)",
-                                "value": "13"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Weather",
-                        "value": [
-                            {
-                                "label": "Humidity (HU)",
-                                "value": "1"
-                            },
-                            {
-                                "label": "Feels Like Temperature (FL)",
-                                "value": "2"
-                            },
-                            {
-                                "label": "Low Temperature (LO)",
-                                "value": "3"
-                            },
-                            {
-                                "label": "High Temperature (HI)",
-                                "value": "4"
-                            }
-                        ]
-                    },
-                    {
-                        "label": "Health",
-                        "value": [
-                            {
-                                "label": "Steps (ST)",
-                                "value": "6"
-                            },
-                            {
-                                "label": "Distance (DI)",
-                                "value": "9"
-                            },
-                            {
-                                "label": "Active Time (AT)",
-                                "value": "10"
-                            },
-                            {
-                                "label": "Heart Rate (HR)",
-                                "value": "8"
-                            }
-                        ]
-                    }
-                ],
+                "options": [{ "label" : "Nothing", "value": "0" }],
+                "group": "widget"
+            }
+        ]
+    },
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Extra Widgets"
+            },
+            {
+                "type": "text",
+                "defaultValue": "Extra widgets are shown on shake"
+            },
+            {
+                "type": "select",
+                "messageKey": "EXTRA_WIDGET_NW",
+                "label": "North West",
+                "defaultValue": "0",
+                "options": [{ "label" : "Nothing", "value": "0" }],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "EXTRA_WIDGET_NE",
+                "label": "North East",
+                "defaultValue": "0",
+                "options": [{ "label" : "Nothing", "value": "0" }],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "EXTRA_WIDGET_SW",
+                "label": "South West",
+                "defaultValue": "0",
+                "options": [{ "label" : "Nothing", "value": "0" }],
+                "group": "widget"
+            },
+            {
+                "type": "select",
+                "messageKey": "EXTRA_WIDGET_SE",
+                "label": "South East",
+                "defaultValue": "0",
+                "options": [{ "label" : "Nothing", "value": "0" }],
                 "group": "widget"
             }
         ]

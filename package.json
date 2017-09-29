@@ -48,7 +48,11 @@
       "WIDGET_NW",
       "WIDGET_NE",
       "WIDGET_SW",
-      "WIDGET_SE"
+      "WIDGET_SE",
+      "EXTRA_WIDGET_NW",
+      "EXTRA_WIDGET_NE",
+      "EXTRA_WIDGET_SW",
+      "EXTRA_WIDGET_SE"
     ],
     "resources": {
       "media": [

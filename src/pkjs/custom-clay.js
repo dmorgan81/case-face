@@ -4,6 +4,16 @@ module.exports = function(minified) {
     var $ = minified.$;
     var HTML = minified.HTML;
 
+    Clay.on(Clay.EVENTS.BEFORE_BUILD, function() {
+        var widgets = Clay.config[2].items[1].options;
+        for (var i = 2; i < 5; i++) {
+            Clay.config[2].items[i].options = widgets;
+        }
+        for (var i = 2; i < 6; i++) {
+            Clay.config[3].items[i].options = widgets;
+        }
+    });
+
     Clay.on(Clay.EVENTS.AFTER_BUILD, function() {
         var platform = Clay.meta.activeWatchInfo.platform || 'diorite';
 

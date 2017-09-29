@@ -45,7 +45,7 @@ static FctxLayer *s_widget_container_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_temperature_layer;
-static FctxTextLayer *s_widget_layers[4];
+static FctxTextLayer *s_widget_layers[8];
 
 static FctxTextLayer** s_text_layers[] = {
     &s_time_layer,
@@ -55,6 +55,10 @@ static FctxTextLayer** s_text_layers[] = {
     &s_widget_layers[1],
     &s_widget_layers[2],
     &s_widget_layers[3],
+    &s_widget_layers[4],
+    &s_widget_layers[5],
+    &s_widget_layers[6],
+    &s_widget_layers[7],
 };
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
@@ -342,7 +346,14 @@ static bool prv_has_widget_type(WidgetType type) {
     WidgetType widget_ne = atoi(enamel_get_WIDGET_NE());
     WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
     WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
-    return widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
+    bool widgets = widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
+
+    widget_nw = atoi(enamel_get_EXTRA_WIDGET_NW());
+    widget_ne = atoi(enamel_get_EXTRA_WIDGET_NE());
+    widget_sw = atoi(enamel_get_WIDGET_SW());
+    widget_se = atoi(enamel_get_WIDGET_SE());
+    bool extra_widgets = widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
+    return widgets || extra_widgets;
 }
 
 static void prv_settings_handler(void *context) {
@@ -403,6 +414,10 @@ static void prv_settings_handler(void *context) {
         atoi(enamel_get_WIDGET_NE()),
         atoi(enamel_get_WIDGET_SW()),
         atoi(enamel_get_WIDGET_SE()),
+        atoi(enamel_get_EXTRA_WIDGET_NW()),
+        atoi(enamel_get_EXTRA_WIDGET_NE()),
+        atoi(enamel_get_EXTRA_WIDGET_SW()),
+        atoi(enamel_get_EXTRA_WIDGET_SE()),
     };
 
     for (uint i = 0; i < ARRAY_LENGTH(s_widget_layers); i++) {
