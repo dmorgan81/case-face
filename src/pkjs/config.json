@@ -194,8 +194,10 @@
                 "defaultValue": "Extra Widgets"
             },
             {
-                "type": "text",
-                "defaultValue": "Extra widgets are shown on shake"
+                "type": "toggle",
+                "messageKey": "EXTRA_WIDGETS_ENABLED",
+                "label": "Show on Shake",
+                "defaultValue": false
             },
             {
                 "type": "select",

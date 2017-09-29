@@ -348,6 +348,8 @@ static bool prv_has_widget_type(WidgetType type) {
     WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
     bool widgets = widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
 
+    if (!enamel_get_EXTRA_WIDGETS_ENABLED()) return widgets;
+
     widget_nw = atoi(enamel_get_EXTRA_WIDGET_NW());
     widget_ne = atoi(enamel_get_EXTRA_WIDGET_NE());
     widget_sw = atoi(enamel_get_WIDGET_SW());
@@ -407,6 +409,13 @@ static void prv_settings_handler(void *context) {
     } else if (!needs_connection && s_connection_event_handle) {
         events_connection_service_unsubscribe(s_connection_event_handle);
         s_connection_event_handle = NULL;
+    }
+
+    if (enamel_get_EXTRA_WIDGETS_ENABLED() && !s_tap_event_handle) {
+        s_tap_event_handle = events_accel_tap_service_subscribe(prv_tap_handler);
+    } else if (!enamel_get_EXTRA_WIDGETS_ENABLED() && s_tap_event_handle) {
+        events_accel_tap_service_unsubscribe(s_tap_event_handle);
+        s_tap_event_handle = NULL;
     }
 
     WidgetType widget_types[] = {
@@ -489,7 +498,6 @@ static void prv_window_load(Window *window) {
     memset(s_widget_buffers, 0, sizeof(s_widget_buffers));
 
     s_weather_event_handle = events_weather_subscribe(prv_weather_handler, NULL);
-    s_tap_event_handle = events_accel_tap_service_subscribe(prv_tap_handler);
 
     prv_settings_handler(NULL);
     s_settings_event_handle = enamel_settings_received_subscribe(prv_settings_handler, NULL);
@@ -503,7 +511,7 @@ static void prv_window_unload(Window *window) {
 #endif
     if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
-    events_accel_tap_service_unsubscribe(s_tap_event_handle);
+    if (s_tap_event_handle) events_accel_tap_service_unsubscribe(s_tap_event_handle);
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 

@@ -49,6 +49,7 @@
       "WIDGET_NE",
       "WIDGET_SW",
       "WIDGET_SE",
+      "EXTRA_WIDGETS_ENABLED",
       "EXTRA_WIDGET_NW",
       "EXTRA_WIDGET_NE",
       "EXTRA_WIDGET_SW",
