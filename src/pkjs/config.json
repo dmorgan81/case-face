@@ -188,6 +188,7 @@
     },
     {
         "type": "section",
+        "capabilities": [ "NOT_PLATFORM_APLITE" ],
         "items": [
             {
                 "type": "heading",

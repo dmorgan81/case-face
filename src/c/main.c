@@ -45,7 +45,7 @@ static FctxLayer *s_widget_container_layer;
 static FctxTextLayer *s_time_layer;
 static FctxTextLayer *s_date_layer;
 static FctxTextLayer *s_temperature_layer;
-static FctxTextLayer *s_widget_layers[8];
+static FctxTextLayer *s_widget_layers[PBL_IF_APLITE_ELSE(4, 8)];
 
 static FctxTextLayer** s_text_layers[] = {
     &s_time_layer,
@@ -55,10 +55,12 @@ static FctxTextLayer** s_text_layers[] = {
     &s_widget_layers[1],
     &s_widget_layers[2],
     &s_widget_layers[3],
+#ifndef PBL_PLATFORM_APLITE
     &s_widget_layers[4],
     &s_widget_layers[5],
     &s_widget_layers[6],
     &s_widget_layers[7],
+#endif
 };
 static char s_widget_buffers[WidgetTypeEnd][WIDGET_BUF_LEN];
 
@@ -104,9 +106,14 @@ static EventHandle s_battery_state_event_handle;
 static EventHandle s_health_event_handle;
 #endif
 static EventHandle s_connection_event_handle;
-static EventHandle s_tap_event_handle;
 
+#ifndef PBL_PLATFORM_APLITE
+static EventHandle s_tap_event_handle;
 static bool s_tap_animated;
+#ifdef PBL_PLATFORM_DIORITE
+static AppTimer *s_tap_timer;
+#endif // PBL_PLATFORM_DIORITE
+#endif // !PBL_PLATFORM_APLITE
 
 static void prv_fctx_draw_rect(FContext *fctx, GRect rect) {
     logf();
@@ -316,14 +323,39 @@ static void prv_connection_handler(bool connected) {
     fctx_layer_mark_dirty(s_root_layer);
 }
 
+#ifndef PBL_PLATFORM_APLITE
 static void prv_tap_animation_stopped(Animation *animation, bool finished, void *context) {
     logf();
     s_tap_animated = false;
+#ifdef PBL_PLATFORM_DIORITE
+    if (s_tap_timer) {
+        app_timer_cancel(s_tap_timer);
+        s_tap_timer = NULL;
+    }
+#endif // PBL_PLATFORM_DIORITE
 }
+
+#ifdef PBL_PLATFORM_DIORITE
+static void prv_tap_timer_callback(void *context) {
+    logf();
+    s_tap_timer = NULL;
+}
+#endif // PBL_PLATFORM_DIORITE
 
 static void prv_tap_handler(AccelAxisType axis, int32_t direction) {
     logf();
     if (s_tap_animated) return;
+
+#ifdef PBL_PLATFORM_DIORITE
+    if (!s_tap_timer) {
+        s_tap_timer = app_timer_register(500, prv_tap_timer_callback, NULL);
+        return;
+    } else {
+        app_timer_cancel(s_tap_timer);
+        s_tap_timer = NULL;
+    }
+#endif // PBL_PLATFORM_DIORITE
+
     s_tap_animated = true;
 
     GRect from = fctx_layer_get_frame(s_widget_container_layer);
@@ -340,6 +372,7 @@ static void prv_tap_handler(AccelAxisType axis, int32_t direction) {
     Animation *sequence = animation_sequence_create(property_animation_get_animation(animation), clone, NULL);
     s_tap_animated = animation_schedule(sequence);
 }
+#endif // !PBL_PLATFORM_APLITE
 
 static bool prv_has_widget_type(WidgetType type) {
     WidgetType widget_nw = atoi(enamel_get_WIDGET_NW());
@@ -347,7 +380,9 @@ static bool prv_has_widget_type(WidgetType type) {
     WidgetType widget_sw = atoi(enamel_get_WIDGET_SW());
     WidgetType widget_se = atoi(enamel_get_WIDGET_SE());
     bool widgets = widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
-
+#ifdef PBL_PLATFORM_APLITE
+    return widgets;
+#else
     if (!enamel_get_EXTRA_WIDGETS_ENABLED()) return widgets;
 
     widget_nw = atoi(enamel_get_EXTRA_WIDGET_NW());
@@ -356,6 +391,7 @@ static bool prv_has_widget_type(WidgetType type) {
     widget_se = atoi(enamel_get_WIDGET_SE());
     bool extra_widgets = widget_nw == type || widget_ne == type || widget_sw == type || widget_se == type;
     return widgets || extra_widgets;
+#endif
 }
 
 static void prv_settings_handler(void *context) {
@@ -411,22 +447,26 @@ static void prv_settings_handler(void *context) {
         s_connection_event_handle = NULL;
     }
 
+#ifndef PBL_PLATFORM_APLITE
     if (enamel_get_EXTRA_WIDGETS_ENABLED() && !s_tap_event_handle) {
         s_tap_event_handle = events_accel_tap_service_subscribe(prv_tap_handler);
     } else if (!enamel_get_EXTRA_WIDGETS_ENABLED() && s_tap_event_handle) {
         events_accel_tap_service_unsubscribe(s_tap_event_handle);
         s_tap_event_handle = NULL;
     }
+#endif
 
     WidgetType widget_types[] = {
         atoi(enamel_get_WIDGET_NW()),
         atoi(enamel_get_WIDGET_NE()),
         atoi(enamel_get_WIDGET_SW()),
         atoi(enamel_get_WIDGET_SE()),
+#ifndef PBL_PLATFORM_APLITE
         atoi(enamel_get_EXTRA_WIDGET_NW()),
         atoi(enamel_get_EXTRA_WIDGET_NE()),
         atoi(enamel_get_EXTRA_WIDGET_SW()),
         atoi(enamel_get_EXTRA_WIDGET_SE()),
+#endif
     };
 
     for (uint i = 0; i < ARRAY_LENGTH(s_widget_layers); i++) {
@@ -505,13 +545,19 @@ static void prv_window_load(Window *window) {
 
 static void prv_window_unload(Window *window) {
     logf();
+#ifdef PBL_PLATFORM_DIORITE
+    if (s_tap_timer) app_timer_cancel(s_tap_timer);
+#endif
+
     if (s_connection_event_handle) events_connection_service_unsubscribe(s_connection_event_handle);
 #ifdef PBL_HEALTH
     if (s_health_event_handle) events_health_service_events_unsubscribe(s_health_event_handle);
 #endif
     if (s_battery_state_event_handle) events_battery_state_service_unsubscribe(s_battery_state_event_handle);
     enamel_settings_received_unsubscribe(s_settings_event_handle);
+#ifndef PBL_PLATFORM_APLITE
     if (s_tap_event_handle) events_accel_tap_service_unsubscribe(s_tap_event_handle);
+#endif
     events_weather_unsubscribe(s_weather_event_handle);
     events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
 
