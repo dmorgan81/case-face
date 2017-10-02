@@ -262,7 +262,7 @@ static void prv_health_handler(HealthEventType event, void *context) {
             HealthValue steps = health_service_sum_today(HealthMetricStepCount);
             char *s = s_widget_buffers[WidgetTypeSteps];
             if (steps < 1000) snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld", steps);
-            else snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld.%ldK", steps / 1000, steps / 1000 % 10);
+            else snprintf(s, WIDGET_BUF_SIZEOF(s), "ST: %ld.%ldK", steps / 1000, steps / 100 % 10);
         }
 
         mask = health_service_metric_accessible(HealthMetricWalkedDistanceMeters, start, end);
